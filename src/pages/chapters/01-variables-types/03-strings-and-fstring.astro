@@ -1,0 +1,163 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+import Quiz from '../../../components/Quiz.astro';
+---
+
+<Lecture
+  chapterSlug="01-variables-types"
+  lessonSlug="03-strings-and-fstring"
+  hook="A string is a sequence of characters. f-strings — Python's modern way to weave values into text — are the only string formatting you really need in this course."
+>
+  <h2>Strings: text in quotes</h2>
+  <p>
+    A <strong>string</strong> is any sequence of characters wrapped in quotes.
+    Python accepts either single quotes <code>'...'</code> or double quotes
+    <code>"..."</code> — pick one and be consistent. Use the other style when the
+    string itself contains a quote.
+  </p>
+
+  <CodePlayground
+    code={`a = 'hello'
+b = "hello"
+print(a == b)            # → True. Quote style doesn't change the value.
+
+# When the string contains a quote, use the other style to avoid escaping:
+song = "Don't Stop Me Now"
+quote = 'He said "ok"'
+print(song)
+print(quote)`}
+  />
+
+  <Callout tone="tip" title="Escape sequences for the awkward cases">
+    <p>
+      Inside a string, a backslash <code>\\</code> introduces a special character:
+      <code>\\n</code> is a newline, <code>\\t</code> is a tab, <code>\\\\</code>
+      is a literal backslash, <code>\\"</code> is a quote that doesn't end the
+      string.
+    </p>
+  </Callout>
+
+  <CodePlayground
+    code={`print("line one\\nline two")
+print("col1\\tcol2\\tcol3")
+print("She said \\"hi\\"")`}
+  />
+
+  <h2>+ glues strings, * repeats them</h2>
+  <p>
+    The same <code>+</code> you use for numbers also <strong>concatenates</strong>
+    strings — it joins them end-to-end. The <code>*</code> operator <strong>repeats</strong>
+    a string. Both operands of <code>+</code> must be strings, though.
+  </p>
+
+  <CodePlayground
+    code={`first = "Ada"
+last  = "Lovelace"
+print(first + " " + last)        # → Ada Lovelace
+print("=" * 30)                  # → ==============================
+print("ha" * 4)                  # → hahahaha
+
+# This one fails. Read the error:
+# print("Hi " + 5)`}
+  />
+
+  <Callout tone="pitfall" title="You can't add a string and a number">
+    <p>
+      <code>"Hi " + 5</code> raises <code>TypeError: can only concatenate str
+      (not "int") to str</code>. You'd have to convert one side:
+      <code>"Hi " + str(5)</code> works. But honestly — that's exactly the
+      problem f-strings were invented to solve. Keep reading.
+    </p>
+  </Callout>
+
+  <h2>f-strings: the right way to build text</h2>
+  <p>
+    An <strong>f-string</strong> is a string literal with the letter <code>f</code>
+    in front. Inside it, anything in <code>{`{}`}</code> is treated as a Python
+    expression and replaced with its value at runtime. This is by far the most
+    common way to format text in modern Python.
+  </p>
+
+  <CodePlayground
+    autoRun
+    code={`name = "Alice"
+age = 18
+
+# The wrong way (works, but verbose and easy to mess up):
+print("Hello, " + name + "! You are " + str(age) + " years old.")
+
+# The right way:
+print(f"Hello, {name}! You are {age} years old.")`}
+  />
+
+  <p>
+    Inside the braces you can put any expression — not just a single variable:
+  </p>
+
+  <CodePlayground
+    code={`price = 4.50
+qty   = 3
+print(f"Subtotal: \${price * qty:.2f}")        # arithmetic + 2-decimal format
+print(f"Average per item: \${price * qty / qty:.2f}")
+
+name = "ada"
+print(f"Title-cased: {name.title()}")         # method calls work too
+print(f"Length: {len(name)} characters")`}
+  />
+
+  <Callout tone="tip" title="The :.2f format spec">
+    <p>
+      After a colon inside <code>{`{}`}</code>, you can write a format spec.
+      <code>:.2f</code> means "float, 2 decimal places". <code>:,</code> adds
+      thousands separators. <code>:&gt;10</code> right-aligns in a 10-char column.
+      You don't need to memorize these — just know they exist for when you need
+      them.
+    </p>
+  </Callout>
+
+  <h2>The three formatting styles you may see</h2>
+  <p>
+    You'll find old code that uses <code>%</code>-formatting or
+    <code>.format()</code>. They still work, but for this course, write f-strings.
+  </p>
+
+  <CodePlayground
+    caption="All three lines produce the same output"
+    code={`name = "Alice"
+age = 18
+
+print("Hello, %s! You are %d years old." % (name, age))           # old: %-formatting
+print("Hello, {}! You are {} years old.".format(name, age))       # 2010-era: .format()
+print(f"Hello, {name}! You are {age} years old.")                 # modern: f-string ← use this`}
+  />
+
+  <Quiz
+    question='What does this print?  greeting = f"Hi {name.upper()}"  print(greeting)  — given name = "ada"'
+    choices={[
+      { text: '"Hi ada"',         explain: "Almost — but `name.upper()` is called, not just `name`." },
+      { text: '"Hi ADA"', correct: true, explain: "Right. Inside `{}` you can run any expression, including method calls like .upper()." },
+      { text: '"Hi name.upper()"', explain: "The whole point of an f-string is that the braces get *evaluated*, not printed literally." },
+      { text: 'SyntaxError',      explain: "f-strings allow method calls inside braces — totally legal." },
+    ]}
+  />
+
+  <Quiz
+    question='Which of these correctly puts the value of `qty` into the message?'
+    choices={[
+      { text: 'msg = "You ordered " + qty + " items"',  explain: "TypeError — can't add a str and an int. Use str(qty) or an f-string." },
+      { text: 'msg = "You ordered {qty} items"',         explain: "No `f` in front, so the braces are just literal text." },
+      { text: 'msg = f"You ordered {qty} items"', correct: true, explain: "Yes — the `f` activates the braces as expressions." },
+      { text: 'msg = "You ordered $qty items"',          explain: "That's Bash / shell syntax, not Python." },
+    ]}
+  />
+
+  <h2>Now you try</h2>
+  <p>
+    The exercise file <code>03-strings-and-fstring.py</code> in WolfCode asks
+    you to write a function <code>build_greeting(name, age)</code> that returns
+    a greeting in the f-string style. The tests check both names and ages, so
+    your function has to work for any input — don't hardcode <code>"Alice"</code>.
+  </p>
+</Lecture>

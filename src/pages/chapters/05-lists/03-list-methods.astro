@@ -1,0 +1,56 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="05-lists"
+  lessonSlug="03-list-methods"
+  hook="Think Python's most-quoted Debugging warning: don't write `t = t.sort()`. sort() returns None."
+>
+  <h2>The trap</h2>
+  <CodePlayground
+    caption="The classic mistake"
+    code={`t = [3, 1, 2]
+t = t.sort()              # ← BUG: sort() returns None
+print(t)                  # None
+# Then your next operation on t crashes...`}
+  />
+
+  <Callout tone="note" title="Source: Think Python ch.10 Debugging">
+    <p>
+      <em>"Don't forget that most list methods modify the argument and return
+      None. This is the opposite of the string methods, which return a new
+      string and leave the original alone."</em>
+    </p>
+  </Callout>
+
+  <h2>The fix — `sorted()` and `list(reversed())`</h2>
+  <CodePlayground
+    autoRun
+    code={`def sorted_copy(t):
+    return sorted(t)
+
+def reversed_copy(t):
+    return list(reversed(t))            # reversed() returns an iterator
+
+nums = [3, 1, 4, 1, 5, 9, 2, 6]
+print("Sorted  :", sorted_copy(nums))
+print("Reversed:", reversed_copy(nums))
+print("Original:", nums, "(unchanged)")`}
+  />
+
+  <h2>The full cheat-sheet</h2>
+  <table class="text-sm">
+    <thead><tr><th>Operation</th><th>In-place (mutates)</th><th>New list (preserves)</th></tr></thead>
+    <tbody>
+      <tr><td>Sort</td><td><code>t.sort()</code></td><td><code>sorted(t)</code></td></tr>
+      <tr><td>Reverse</td><td><code>t.reverse()</code></td><td><code>list(reversed(t))</code></td></tr>
+      <tr><td>Append</td><td><code>t.append(x)</code></td><td><code>t + [x]</code></td></tr>
+      <tr><td>Remove last</td><td><code>t.pop()</code></td><td><code>t[:-1]</code></td></tr>
+    </tbody>
+  </table>
+
+  <p>When in doubt, prefer the right column — they're safer.</p>
+</Lecture>

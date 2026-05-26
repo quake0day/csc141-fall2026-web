@@ -1,0 +1,28 @@
+---
+type Tone = 'tip' | 'warning' | 'note' | 'pitfall';
+interface Props {
+  tone?: Tone;
+  title?: string;
+}
+const { tone = 'note', title } = Astro.props;
+
+const styles: Record<Tone, { ring: string; bg: string; dot: string; label: string }> = {
+  tip:     { ring: 'ring-accent-mint/40',  bg: 'bg-accent-mint/[0.06]', dot: 'bg-accent-mint',  label: 'Tip' },
+  warning: { ring: 'ring-accent-warm/40',  bg: 'bg-accent-warm/[0.06]', dot: 'bg-accent-warm',  label: 'Heads up' },
+  pitfall: { ring: 'ring-accent-warm/40',  bg: 'bg-accent-warm/[0.06]', dot: 'bg-accent-warm',  label: 'Common pitfall' },
+  note:    { ring: 'ring-accent/30',       bg: 'bg-accent/[0.05]',      dot: 'bg-accent',       label: 'Note' },
+};
+const s = styles[tone];
+---
+
+<aside class={`callout my-6 rounded-lg ring-1 ${s.ring} ${s.bg} px-5 py-4`}>
+  <div class="mb-1.5 flex items-center gap-2">
+    <span class={`inline-block h-1.5 w-1.5 rounded-full ${s.dot}`}></span>
+    <span class="text-[11px] font-mono uppercase tracking-[0.12em] text-ink-200">
+      {title ?? s.label}
+    </span>
+  </div>
+  <div class="text-[15px] leading-7 text-ink-100/95">
+    <slot />
+  </div>
+</aside>

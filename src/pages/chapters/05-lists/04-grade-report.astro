@@ -1,0 +1,78 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="05-lists"
+  lessonSlug="04-grade-report"
+  hook="Chapter 5 capstone — pulls together lists, loops, conditionals, functions. Five functions, one assembler."
+>
+  <h2>The 5 functions</h2>
+  <ul>
+    <li><code>average(scores)</code> — mean; guard for empty</li>
+    <li><code>highest(scores)</code> — max; guard for empty</li>
+    <li><code>pass_count(scores, threshold=60)</code> — count passing scores</li>
+    <li><code>letter_grade(avg)</code> — Ch.2 elif chain</li>
+    <li><code>report(name, scores)</code> — orchestrator, calls all four</li>
+  </ul>
+
+  <Callout tone="warning" title="🔒 no_paste mode is ON">
+    <p>Graded homework. Type it. Tutor maxes at L2.</p>
+  </Callout>
+
+  <h2>The shape</h2>
+  <CodePlayground
+    caption="The orchestrator — see how it composes the helpers"
+    code={`def average(scores):
+    if not scores:
+        return 0.0
+    return sum(scores) / len(scores)
+
+def highest(scores):
+    if not scores:
+        return 0
+    return max(scores)
+
+def pass_count(scores, threshold=60):
+    return len([s for s in scores if s >= threshold])
+
+def letter_grade(avg):
+    if avg >= 90: return "A"
+    elif avg >= 80: return "B"
+    elif avg >= 70: return "C"
+    elif avg >= 60: return "D"
+    else: return "F"
+
+def report(name, scores):
+    avg = average(scores)
+    return {
+        "name": name,
+        "average": round(avg, 2),
+        "highest": highest(scores),
+        "pass_count": pass_count(scores),
+        "grade": letter_grade(avg),
+    }
+
+print(report("Ada Lovelace", [85, 92, 78, 95, 88]))
+print(report("Edge Case", []))`}
+  />
+
+  <Callout tone="pitfall" title="Why guard against empty lists?">
+    <p>
+      <code>sum([]) / len([])</code> raises <code>ZeroDivisionError</code>.
+      <code>max([])</code> raises <code>ValueError</code>. The test
+      <code>test_average_empty</code> hands you an empty list explicitly —
+      handle it with one line: <code>if not scores: return 0.0</code>.
+    </p>
+  </Callout>
+
+  <h2>Acceptance criteria</h2>
+  <ul>
+    <li>All 8 tests pass</li>
+    <li><code>report</code> calls at least 3 of the 4 helpers</li>
+    <li><code>average</code> survives empty input</li>
+    <li>All average values rounded to 2 decimals</li>
+  </ul>
+</Lecture>

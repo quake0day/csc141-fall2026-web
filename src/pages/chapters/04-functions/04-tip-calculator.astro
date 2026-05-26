@@ -1,0 +1,77 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="04-functions"
+  lessonSlug="04-tip-calculator"
+  hook="Four functions. Three small helpers and one orchestrator. The grade is for decomposition as much as correctness."
+>
+  <h2>The four functions</h2>
+  <ul>
+    <li><code>compute_tip(subtotal, tip_pct)</code> — tip amount</li>
+    <li><code>compute_total(subtotal, tip_pct)</code> — subtotal + tip</li>
+    <li><code>split_evenly(amount, people)</code> — per-person share</li>
+    <li><code>bill_summary(subtotal, tip_pct, people)</code> — dict with all three</li>
+  </ul>
+
+  <Callout tone="warning" title="🔒 no_paste mode is ON">
+    <p>Graded homework. Type it. Tutor maxes at L2.</p>
+  </Callout>
+
+  <h2>The right shape</h2>
+  <CodePlayground
+    caption="See how each helper does ONE thing"
+    code={`def compute_tip(subtotal, tip_pct):
+    return subtotal * tip_pct / 100
+
+def compute_total(subtotal, tip_pct):
+    return subtotal + compute_tip(subtotal, tip_pct)    # composition
+
+def split_evenly(amount, people):
+    return amount / people
+
+def bill_summary(subtotal, tip_pct, people):
+    tip = compute_tip(subtotal, tip_pct)
+    total = compute_total(subtotal, tip_pct)
+    per_person = split_evenly(total, people)
+    return {
+        "tip": round(tip, 2),
+        "total": round(total, 2),
+        "per_person": round(per_person, 2),
+    }
+
+print(bill_summary(50.00, 20, 4))
+print(bill_summary(125.50, 18, 3))`}
+  />
+
+  <h2>Why FOUR functions instead of one?</h2>
+  <p>
+    You could write everything in one <code>bill_summary</code>. It would work.
+    But three things would suffer:
+  </p>
+  <ol>
+    <li><strong>Tip formula is computed multiple times</strong> — change it once, find it three places.</li>
+    <li><strong>Each line does too much</strong> — hard to test pieces in isolation.</li>
+    <li><strong>Names disappear</strong> — readers re-parse the arithmetic instead of trusting <code>compute_tip</code>.</li>
+  </ol>
+
+  <h2>Acceptance criteria</h2>
+  <ul>
+    <li>All 7 tests pass</li>
+    <li><code>compute_total</code> CALLS <code>compute_tip</code></li>
+    <li><code>bill_summary</code> CALLS at least 2 of the 3 helpers</li>
+    <li>Dict values rounded to 2 decimals</li>
+  </ul>
+
+  <Callout tone="tip" title="Bottom-up — the textbook's advice">
+    <p>
+      From Think Python §3.11: <em>"Dividing a long program into functions
+      allows you to debug the parts one at a time and then assemble them
+      into a working whole."</em> Write and test <code>compute_tip</code>
+      first. Then <code>compute_total</code>. Then the others.
+    </p>
+  </Callout>
+</Lecture>

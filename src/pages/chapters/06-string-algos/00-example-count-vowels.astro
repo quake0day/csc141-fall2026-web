@@ -1,0 +1,46 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="06-string-algos"
+  lessonSlug="00-example-count-vowels"
+  hook="The textbook's canonical counter pattern (TP §8.7), applied to vowels instead of a single letter."
+>
+  <CodePlayground
+    autoRun
+    code={`def count_vowels(text):
+    count = 0
+    vowels = "aeiou"
+    for char in text.lower():
+        if char in vowels:
+            count += 1
+    return count
+
+for text in ["banana", "Hello World", "AEIOU", "xyz", ""]:
+    print(f"{text!r:>15}: {count_vowels(text)} vowels")`}
+  />
+
+  <Callout tone="note" title="Source: Think Python §8.7">
+    <p>
+      <em>"The variable count is initialized to 0 and then incremented each
+      time an a is found. When the loop exits, count contains the result."</em>
+    </p>
+  </Callout>
+
+  <h2>The three-piece pattern</h2>
+  <ul>
+    <li><strong>Initialize</strong> — <code>count = 0</code></li>
+    <li><strong>Traverse + condition</strong> — <code>for char in text: if char in vowels:</code></li>
+    <li><strong>Update + return</strong> — <code>count += 1</code> then <code>return count</code></li>
+  </ul>
+
+  <h2>The <code>in</code> operator on strings</h2>
+  <CodePlayground
+    code={`print("a" in "banana")       # True (single char)
+print("ana" in "banana")     # True (substring)
+print("z" in "banana")       # False`}
+  />
+</Lecture>

@@ -1,0 +1,56 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="05-lists"
+  lessonSlug="00-example-list-basics"
+  hook="Five tiny operations every later lesson reuses. Index, slice, mutate, copy, len."
+>
+  <h2>The five functions</h2>
+  <CodePlayground
+    autoRun
+    code={`def first_element(t):     return t[0]
+def last_element(t):      return t[-1]
+def first_three(t):       return t[0:3]
+def length(t):            return len(t)
+def with_first_replaced(t, new_value):
+    copy = t[:]
+    copy[0] = new_value
+    return copy
+
+numbers = [42, 13, 7, 99, 100]
+print("First :", first_element(numbers))
+print("Last  :", last_element(numbers))
+print("First3:", first_three(numbers))
+print("Length:", length(numbers))
+print("Replaced:", with_first_replaced(numbers, 1000))
+print("Original:", numbers, "(unchanged)")`}
+  />
+
+  <Callout tone="note" title="The t[:] copy idiom (TP §10.11)">
+    <p>
+      <code>copy = t[:]</code> is a full slice — it creates a new list with
+      the same elements. Modifying <code>copy</code> doesn't touch
+      <code>t</code>. Without this line, <code>with_first_replaced</code>
+      would betray its caller by mutating in place.
+    </p>
+  </Callout>
+
+  <h2>Negative indexing</h2>
+  <CodePlayground
+    code={`t = [42, 13, 7, 99, 100]
+#  idx:  0   1   2   3    4
+#  neg: -5  -4  -3  -2   -1
+print(t[0], t[-1])           # 42  100
+print(t[-2], t[-3])          # 99  7
+
+# Out of range raises IndexError:
+try:
+    t[5]
+except IndexError as e:
+    print("error:", e)`}
+  />
+</Lecture>

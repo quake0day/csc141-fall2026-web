@@ -1,0 +1,48 @@
+---
+import Site from '../../../layouts/Site.astro';
+import KCBadge from '../../../components/KCBadge.astro';
+import { chapters, lessonPath } from '../../../data/course';
+
+const chapter = chapters.find((c) => c.slug === '01-variables-types')!;
+---
+
+<Site title={chapter.title}>
+  <section class="mx-auto max-w-3xl px-6 pt-16 pb-10">
+    <div class="text-xs font-mono uppercase tracking-[0.18em] text-ink-300">Chapter 01</div>
+    <h1 class="mt-2 text-4xl font-bold tracking-tight text-ink-50 sm:text-5xl">
+      {chapter.title}
+    </h1>
+    <p class="mt-1 font-serif text-xl italic text-ink-200">{chapter.title_zh}</p>
+    <p class="mt-5 max-w-prose text-[17px] leading-[1.75] text-ink-100/90">{chapter.summary}</p>
+
+    <h2 class="mt-12 text-sm font-mono uppercase tracking-[0.18em] text-ink-300">
+      Lessons in this chapter
+    </h2>
+    <ol class="mt-4 space-y-3">
+      {chapter.lessons.map((lesson, i) => (
+        <li>
+          <a
+            href={lessonPath(chapter.slug, lesson.slug)}
+            class="group flex items-center justify-between gap-6 rounded-xl border border-ink-700/50 bg-ink-900/40 px-5 py-4 transition hover:border-accent/40 hover:bg-ink-800/60"
+          >
+            <div class="flex-1">
+              <div class="text-xs font-mono text-ink-300">
+                01.{String(i + 1).padStart(2, '0')}
+              </div>
+              <div class="mt-1 text-lg font-medium text-ink-50 group-hover:text-accent transition-colors">
+                {lesson.title}
+              </div>
+              <div class="mt-0.5 font-serif text-sm italic text-ink-200">{lesson.title_zh}</div>
+            </div>
+            <div class="flex flex-col items-end gap-2">
+              <div class="flex flex-wrap items-center gap-1.5">
+                {lesson.kc.map((kc) => <KCBadge kc={kc} />)}
+              </div>
+              <span class="text-xs text-ink-300">{lesson.estimated_minutes} min</span>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+</Site>

@@ -1,0 +1,177 @@
+---
+interface Props {
+  code: string;
+  /** A short label shown above the editor. */
+  caption?: string;
+  /** Hide the Reset button when true. */
+  noReset?: boolean;
+  /** Auto-run on first reveal. Default false (lazy). */
+  autoRun?: boolean;
+}
+
+const { code, caption, noReset, autoRun } = Astro.props;
+const playgroundId = `pg-${Math.random().toString(36).slice(2, 10)}`;
+---
+
+<div
+  class="playground my-6 overflow-hidden rounded-xl border border-ink-700/60 bg-ink-900/80 shadow-xl shadow-ink-950/40 ring-1 ring-white/5"
+  data-playground-id={playgroundId}
+  data-autorun={autoRun ? 'true' : 'false'}
+>
+  <div class="flex items-center justify-between border-b border-ink-700/60 bg-ink-800/60 px-4 py-2.5">
+    <div class="flex items-center gap-2 text-xs text-ink-200">
+      <span class="inline-block h-2 w-2 rounded-full bg-accent-mint/80"></span>
+      <span class="font-mono uppercase tracking-wider text-ink-200/80">{caption ?? 'Python · runnable'}</span>
+    </div>
+    <div class="flex items-center gap-2">
+      {!noReset && (
+        <button
+          type="button"
+          class="reset-btn rounded-md px-2.5 py-1 text-xs text-ink-200 hover:bg-ink-700/50 hover:text-ink-50 transition"
+          title="Reset to original code"
+        >
+          Reset
+        </button>
+      )}
+      <button
+        type="button"
+        class="run-btn inline-flex items-center gap-1.5 rounded-md bg-accent/15 px-3 py-1 text-xs font-medium text-accent ring-1 ring-accent/30 hover:bg-accent/25 transition"
+      >
+        <svg viewBox="0 0 12 12" class="h-3 w-3" fill="currentColor" aria-hidden="true"
+          ><path d="M3 1.5v9l8-4.5z"></path></svg
+        >
+        <span class="run-btn-label">Run</span>
+      </button>
+    </div>
+  </div>
+
+  <textarea
+    class="code-area block w-full resize-none bg-ink-900/60 px-5 py-4 font-mono text-[13.5px] leading-6 text-ink-50 outline-none focus:bg-ink-900"
+    spellcheck="false"
+    rows={Math.min(Math.max(code.split('\n').length, 3), 18)}
+    data-original={code}>{code}</textarea
+  >
+
+  <div
+    class="output-area hidden border-t border-ink-700/60 bg-ink-950/60 px-5 py-3 font-mono text-[13px] leading-6"
+  >
+    <div class="output-status flex items-center gap-2 text-ink-200">
+      <span class="status-dot inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-accent-mint"></span>
+      <span class="status-text">Loading Python runtime (~5 MB, one-time)…</span>
+    </div>
+    <pre class="output-text mt-2 whitespace-pre-wrap text-ink-50"></pre>
+  </div>
+</div>
+
+<script>
+  type PyodideInterface = {
+    runPythonAsync: (code: string) => Promise<unknown>;
+    setStdout: (opts: { batched: (s: string) => void }) => void;
+    setStderr: (opts: { batched: (s: string) => void }) => void;
+  };
+
+  // Single shared Pyodide instance per page load.
+  let pyodidePromise: Promise<PyodideInterface> | null = null;
+
+  function loadPyodide(): Promise<PyodideInterface> {
+    if (pyodidePromise) return pyodidePromise;
+    pyodidePromise = (async () => {
+      const w = window as unknown as { loadPyodide?: (opts: { indexURL: string }) => Promise<PyodideInterface> };
+      if (!w.loadPyodide) {
+        await new Promise<void>((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js';
+          s.onload = () => resolve();
+          s.onerror = () => reject(new Error('Failed to load Pyodide script'));
+          document.head.appendChild(s);
+        });
+      }
+      const pyodide = await window.loadPyodide!({
+        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.27.2/full/',
+      });
+      return pyodide;
+    })();
+    return pyodidePromise;
+  }
+
+  function wirePlayground(root: HTMLElement) {
+    const codeArea = root.querySelector<HTMLTextAreaElement>('.code-area')!;
+    const runBtn = root.querySelector<HTMLButtonElement>('.run-btn')!;
+    const runLabel = root.querySelector<HTMLSpanElement>('.run-btn-label')!;
+    const resetBtn = root.querySelector<HTMLButtonElement>('.reset-btn');
+    const outputArea = root.querySelector<HTMLElement>('.output-area')!;
+    const statusEl = root.querySelector<HTMLElement>('.status-text')!;
+    const statusDot = root.querySelector<HTMLElement>('.status-dot')!;
+    const outputText = root.querySelector<HTMLPreElement>('.output-text')!;
+
+    const original = codeArea.dataset.original ?? '';
+
+    async function runCode() {
+      runBtn.disabled = true;
+      runLabel.textContent = 'Loading…';
+      outputArea.classList.remove('hidden');
+      statusEl.textContent = 'Loading Python runtime (~5 MB, one-time)…';
+      statusDot.classList.add('animate-pulse');
+      statusDot.classList.remove('bg-accent-warm', 'bg-accent-mint');
+      statusDot.classList.add('bg-accent-mint');
+      outputText.textContent = '';
+
+      try {
+        const pyodide = await loadPyodide();
+
+        statusEl.textContent = 'Running…';
+        runLabel.textContent = 'Running…';
+
+        const buffer: string[] = [];
+        pyodide.setStdout({ batched: (s: string) => buffer.push(s) });
+        pyodide.setStderr({ batched: (s: string) => buffer.push(s) });
+
+        const t0 = performance.now();
+        await pyodide.runPythonAsync(codeArea.value);
+        const dt = Math.round(performance.now() - t0);
+
+        outputText.textContent = buffer.join('') || '(no output)';
+        statusEl.textContent = `Done in ${dt} ms`;
+        statusDot.classList.remove('animate-pulse');
+      } catch (err) {
+        statusEl.textContent = 'Error';
+        statusDot.classList.remove('bg-accent-mint');
+        statusDot.classList.add('bg-accent-warm');
+        statusDot.classList.remove('animate-pulse');
+        const message = err instanceof Error ? err.message : String(err);
+        outputText.textContent = message;
+      } finally {
+        runBtn.disabled = false;
+        runLabel.textContent = 'Run';
+      }
+    }
+
+    runBtn.addEventListener('click', runCode);
+    resetBtn?.addEventListener('click', () => {
+      codeArea.value = original;
+      outputArea.classList.add('hidden');
+    });
+
+    // Tab key inserts spaces instead of focusing next element.
+    codeArea.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = codeArea.selectionStart;
+        const end = codeArea.selectionEnd;
+        codeArea.value = codeArea.value.slice(0, start) + '    ' + codeArea.value.slice(end);
+        codeArea.selectionStart = codeArea.selectionEnd = start + 4;
+      }
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        void runCode();
+      }
+    });
+
+    if (root.dataset.autorun === 'true') {
+      // Defer slightly so the page paints first.
+      window.requestIdleCallback?.(() => void runCode()) ?? setTimeout(runCode, 200);
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>('.playground').forEach(wirePlayground);
+</script>

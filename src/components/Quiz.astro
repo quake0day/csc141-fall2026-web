@@ -1,0 +1,73 @@
+---
+interface Choice {
+  text: string;
+  correct?: boolean;
+  /** Shown when this choice is selected. */
+  explain?: string;
+}
+interface Props {
+  question: string;
+  choices: Choice[];
+  /** Optional hint shown above the question (use sparingly). */
+  hint?: string;
+}
+const { question, choices, hint } = Astro.props;
+---
+
+<div
+  class="quiz my-8 rounded-xl border border-ink-700/50 bg-ink-900/40 px-6 py-5 shadow-md shadow-ink-950/30"
+>
+  <div class="flex items-baseline justify-between gap-4">
+    <p class="text-xs font-mono uppercase tracking-wider text-accent-mint/80">Check yourself</p>
+    {hint && <p class="text-xs text-ink-300 italic">{hint}</p>}
+  </div>
+  <p class="mt-2 text-[15.5px] leading-7 text-ink-50 font-medium">{question}</p>
+
+  <ul class="mt-4 space-y-2">
+    {
+      choices.map((choice, i) => (
+        <li>
+          <button
+            type="button"
+            class="quiz-choice group flex w-full items-start gap-3 rounded-lg border border-transparent bg-ink-800/50 px-4 py-3 text-left text-sm text-ink-100 hover:border-ink-600/60 hover:bg-ink-800/80 transition"
+            data-correct={choice.correct ? 'true' : 'false'}
+          >
+            <span class="mt-0.5 inline-flex h-5 w-5 flex-none items-center justify-center rounded border border-ink-500/60 font-mono text-[11px] text-ink-200 group-[.correct]:border-accent-mint group-[.correct]:bg-accent-mint/15 group-[.correct]:text-accent-mint group-[.wrong]:border-accent-warm group-[.wrong]:bg-accent-warm/15 group-[.wrong]:text-accent-warm">
+              {String.fromCharCode(65 + i)}
+            </span>
+            <span class="flex-1">
+              <span>{choice.text}</span>
+              {choice.explain && (
+                <span class="quiz-explain mt-1.5 hidden text-xs leading-relaxed text-ink-200/90">
+                  {choice.explain}
+                </span>
+              )}
+            </span>
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.quiz').forEach((quiz) => {
+    const buttons = quiz.querySelectorAll<HTMLButtonElement>('.quiz-choice');
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const correct = btn.dataset.correct === 'true';
+        btn.classList.add(correct ? 'correct' : 'wrong');
+        const explain = btn.querySelector('.quiz-explain');
+        explain?.classList.remove('hidden');
+        // Reveal correct one too on wrong pick (so the student knows).
+        if (!correct) {
+          buttons.forEach((b) => {
+            if (b.dataset.correct === 'true') {
+              b.classList.add('correct');
+            }
+          });
+        }
+      });
+    });
+  });
+</script>

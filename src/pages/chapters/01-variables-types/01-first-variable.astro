@@ -1,0 +1,149 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+import Quiz from '../../../components/Quiz.astro';
+---
+
+<Lecture
+  chapterSlug="01-variables-types"
+  lessonSlug="01-first-variable"
+  hook="A variable is a name you give a value so you can refer to it later. That is the whole idea — but everything else in this course is built on it."
+>
+  <h2>Why we need variables</h2>
+  <p>
+    A computer can compute <code>3 + 4</code> just fine. The trouble starts when
+    the same number shows up in five different places. If you change one of them
+    and forget the others, the program breaks. A <strong>variable</strong> is a
+    name that holds onto a value for you, so you only have to write the value
+    once.
+  </p>
+
+  <CodePlayground
+    caption="Without a variable · don't do this"
+    code={`print("Hi Alice")
+print("Alice's age is 18")
+print("Happy birthday, Alice!")
+# If Alice changes their name, you have to edit all three lines.`}
+  />
+
+  <CodePlayground
+    caption="With variables · this is the move"
+    code={`name = "Alice"
+age = 18
+
+print("Hi", name)
+print(f"{name}'s age is {age}")
+print(f"Happy birthday, {name}!")
+# Change name once at the top; all three lines update.`}
+  />
+
+  <h2>The assignment statement</h2>
+  <p>
+    The single most important symbol in this lesson is <code>=</code>. In Python
+    it is the <strong>assignment operator</strong>. It does <em>not</em> mean
+    "equals" in the math sense — read it as <em>"gets"</em>:
+  </p>
+  <ul>
+    <li><code>age = 18</code> &nbsp;→&nbsp; "the name <code>age</code> gets the value <code>18</code>"</li>
+    <li><code>name = "Alice"</code> &nbsp;→&nbsp; "the name <code>name</code> gets the string <code>"Alice"</code>"</li>
+  </ul>
+  <p>
+    The name always goes on the <strong>left</strong>, the value on the
+    <strong>right</strong>. Reversing them is a syntax error:
+  </p>
+
+  <CodePlayground
+    caption="Try running this — and read the error carefully"
+    code={`18 = age`}
+  />
+
+  <Callout tone="tip" title="Read the error message">
+    <p>
+      You'll see <code>SyntaxError: cannot assign to literal here.</code> Python
+      is telling you it expected a name on the left. Errors in Python are usually
+      this direct — learn to read them, don't panic at them.
+    </p>
+  </Callout>
+
+  <h2>Naming rules</h2>
+  <p>A name in Python can use letters, digits, and underscores. There are three rules:</p>
+  <ol>
+    <li>Must <strong>start with a letter</strong> or underscore — not a digit.</li>
+    <li>No spaces, no hyphens, no <code>@ # $</code>.</li>
+    <li>Cannot be a Python <strong>keyword</strong> like <code>if</code>, <code>for</code>, <code>class</code>, <code>return</code>.</li>
+  </ol>
+  <p>
+    By convention in Python, names use <strong>snake_case</strong>:
+    <code>first_name</code>, <code>total_cents</code>, <code>is_logged_in</code>.
+    Not <code>firstName</code> (that's Java/JavaScript), not <code>FirstName</code>
+    (Python reserves that for class names).
+  </p>
+
+  <CodePlayground
+    caption="Which of these names are legal?"
+    code={`# Try uncommenting each line one at a time and run.
+
+first_name = "Alice"     # ✓ snake_case
+age2 = 18                # ✓ digits allowed after the first character
+_private = True          # ✓ underscore allowed
+
+# 2nd_name = "Bob"       # ✗ starts with a digit
+# first-name = "Bob"     # ✗ Python reads this as: first MINUS name
+# class = "CSC 141"      # ✗ class is a Python keyword
+# my name = "Bob"        # ✗ spaces are not allowed
+
+print("All defined names:", first_name, age2, _private)`}
+  />
+
+  <Callout tone="pitfall" title="= is not ==">
+    <p>
+      <code>=</code> assigns. <code>==</code> compares. We'll see <code>==</code> in
+      Chapter 2 when we get to conditionals. Mixing them up is the most common
+      bug in your first month of Python.
+    </p>
+  </Callout>
+
+  <h2>Variables can be reassigned</h2>
+  <p>
+    The "variable" part of the word is literal: the value behind a name can
+    change. The new value simply replaces the old one.
+  </p>
+
+  <CodePlayground
+    code={`score = 0
+print("Start:", score)
+
+score = score + 10     # read right to left: "old score + 10, store back in score"
+print("After hit:", score)
+
+score = score + 25
+print("After bonus:", score)`}
+  />
+
+  <Quiz
+    question="After this code runs, what does `print(x)` show?"
+    choices={[
+      { text: "10",  explain: "Close — that was x's first value. But the next line reassigned it." },
+      { text: "20",  correct: true, explain: "Right. The second `x = ...` discards the old 10 and stores 20." },
+      { text: "30",  explain: "Python doesn't add the two assignments together; it replaces." },
+      { text: "Error — you can't assign to the same name twice", explain: "Reassignment is totally fine in Python. That's why they're called *variables*." },
+    ]}
+    hint="x = 10  then  x = 20  then  print(x)"
+  />
+
+  <h2>Now you try</h2>
+  <p>
+    Open this lesson in <strong>WolfCode</strong>: the file <code>01-first-variable.py</code>
+    has <code>age = ?</code> waiting for a value. Assign your own age, then run
+    the lesson with <em>Ctrl+Enter</em>.
+  </p>
+
+  <Callout tone="note" title="Tests are watching">
+    <p>
+      The autograder reads three things: that <code>age</code> exists, that
+      <code>name</code> exists, and that <code>print</code> mentions both. You'll
+      see "3 / 3 tests pass" in the WolfCode bottom dock when you've got it.
+    </p>
+  </Callout>
+</Lecture>

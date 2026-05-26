@@ -1,0 +1,49 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="04-functions"
+  lessonSlug="02-multi-args"
+  hook="Two functions. One calls the other. Smallest example of composition (Think Python §3.4) — and the DRY principle (§3.11)."
+>
+  <h2>The two functions</h2>
+  <CodePlayground
+    autoRun
+    code={`def sum_three(a, b, c):
+    return a + b + c
+
+def average_three(a, b, c):
+    return sum_three(a, b, c) / 3   # COMPOSITION — reuse, don't duplicate
+
+print(sum_three(1, 2, 3))      # 6
+print(average_three(1, 2, 3))  # 2.0
+print(average_three(10, 20, 30))  # 20.0`}
+  />
+
+  <Callout tone="pitfall" title="The 'duplicates the addition' version">
+    <p>
+      A "works but worse" version computes <code>a + b + c</code> in both
+      functions. The autograder's <code>test_average_three_uses_sum_three</code>
+      heuristic rejects this — you have to actually call <code>sum_three</code>
+      from inside <code>average_three</code>.
+    </p>
+  </Callout>
+
+  <h2>Why composition matters</h2>
+  <p>
+    From Think Python §3.11: <em>"Functions can make a program smaller by
+    eliminating repetitive code. Later, if you make a change, you only have
+    to make it in one place."</em>
+  </p>
+
+  <h2>Float vs int</h2>
+  <CodePlayground
+    code={`# / is true division — always returns float
+print(6 / 3, type(6 / 3))    # 2.0 <class 'float'>
+# // is floor division — returns int when both operands are int
+print(6 // 3, type(6 // 3))  # 2 <class 'int'>`}
+  />
+</Lecture>

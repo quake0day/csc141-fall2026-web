@@ -1,0 +1,92 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+import Quiz from '../../../components/Quiz.astro';
+---
+
+<Lecture
+  chapterSlug="02-conditionals"
+  lessonSlug="03-leap-year"
+  hook="The textbook's 'flatten the nested if' lesson with a real-world rule. Three levels deep becomes one Boolean expression."
+>
+  <h2>The Gregorian rule</h2>
+  <blockquote>
+    A year is a leap year if it is <strong>divisible by 4</strong>,
+    EXCEPT years <strong>divisible by 100</strong> are NOT leap, EXCEPT
+    years <strong>divisible by 400</strong> ARE leap.
+  </blockquote>
+
+  <h2>The nested approach (don't do this)</h2>
+  <CodePlayground
+    caption="Works, but hard to read and easy to mess up"
+    code={`def is_leap_year(year):
+    if year % 4 == 0:
+        if year % 100 == 0:
+            if year % 400 == 0:
+                return True
+            else:
+                return False
+        else:
+            return True
+    else:
+        return False
+
+for y in [2024, 1900, 2000, 2023, 2100]:
+    print(y, "->", is_leap_year(y))`}
+  />
+
+  <Callout tone="note" title="Source: Think Python §5.6">
+    <p>
+      <em>"In general, it is a good idea to avoid nested conditionals when you
+      can. Logical operators often provide a way to simplify nested conditional
+      statements."</em>
+    </p>
+  </Callout>
+
+  <h2>The flat approach (do this)</h2>
+  <CodePlayground
+    autoRun
+    code={`def is_leap_year(year):
+    return (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
+
+for y in [2024, 1900, 2000, 2023, 1996, 2100]:
+    print(f"is_leap_year({y}) = {is_leap_year(y)}")`}
+  />
+
+  <p>Read it aloud: <em>"Divisible by 4 AND not by 100 — OR — divisible by 400."</em></p>
+
+  <h2>Trace 1900 by hand</h2>
+  <ul>
+    <li><code>1900 % 4 == 0</code> → <code>True</code></li>
+    <li><code>1900 % 100 != 0</code> → <code>False</code></li>
+    <li><code>(True and False)</code> → <code>False</code></li>
+    <li><code>1900 % 400 == 0</code> → <code>False</code></li>
+    <li><code>(False) or (False)</code> → <strong>False</strong></li>
+  </ul>
+
+  <Quiz
+    question="What about year 2100?"
+    choices={[
+      { text: "Leap (True)",  explain: "Trap: 2100 is divisible by 100 but NOT by 400 → NOT leap. This is why the rule has the 400 carve-out." },
+      { text: "Not leap (False)", correct: true, explain: "Right. 2100 % 100 == 0 kills the first clause; 2100 % 400 != 0 kills the second. Both clauses False → result False." },
+      { text: "Depends on calendar", explain: "The Gregorian rule is fully deterministic for any input year." },
+    ]}
+    hint="Pretend you're Python. Evaluate both clauses separately."
+  />
+
+  <Callout tone="pitfall" title="A subtle wrong version">
+    <p>
+      <code>return year % 4 == 0 or year % 400 == 0</code> — missing the
+      "century exception". It'd call <code>1900</code> a leap year. The test
+      <code>test_century_not_400</code> catches this.
+    </p>
+  </Callout>
+
+  <h2>Now you try</h2>
+  <p>
+    Open <code>03-leap-year.py</code> and implement <code>is_leap_year</code>
+    as a single <code>return</code>. The autograder runs 6 tests including all
+    three branches of the rule.
+  </p>
+</Lecture>

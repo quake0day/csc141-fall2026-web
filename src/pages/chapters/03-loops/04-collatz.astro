@@ -1,0 +1,97 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="03-loops"
+  lessonSlug="04-collatz"
+  hook="The textbook's own §7.3 example as a graded problem. The math is unsolved; the program is straightforward."
+>
+  <h2>The rule</h2>
+  <p>
+    Start with a positive integer <code>n</code>. Each step:
+  </p>
+  <ul>
+    <li>If <code>n</code> is even → <code>n = n // 2</code></li>
+    <li>If <code>n</code> is odd  → <code>n = 3 * n + 1</code></li>
+  </ul>
+  <p>Stop when <code>n == 1</code>. Count steps.</p>
+
+  <Callout tone="warning" title="🔒 no_paste mode is ON">
+    <p>
+      Graded homework. Paste is blocked in the entry file — type it out
+      yourself. The Tutor maxes out at hint level 2.
+    </p>
+  </Callout>
+
+  <h2>Worked trace — <code>n = 3</code></h2>
+  <CodePlayground
+    autoRun
+    code={`# step 0: n = 3  (odd)  → 3*3 + 1 = 10
+# step 1: n = 10 (even) → 10 // 2  = 5
+# step 2: n = 5  (odd)  → 3*5 + 1 = 16
+# step 3: n = 16 (even) → 16 // 2  = 8
+# step 4: n = 8  (even) → 8  // 2  = 4
+# step 5: n = 4  (even) → 4  // 2  = 2
+# step 6: n = 2  (even) → 2  // 2  = 1
+# step 7: n = 1  STOP
+
+# Let's verify with code:
+def collatz_steps(n):
+    steps = 0
+    while n != 1:
+        if n % 2 == 0:
+            n = n // 2
+        else:
+            n = 3 * n + 1
+        steps += 1
+    return steps
+
+print(collatz_steps(3))     # → 7
+print(collatz_steps(27))    # → 111   (the famous case)`}
+  />
+
+  <h2>The integer-vs-float trap</h2>
+  <CodePlayground
+    caption="Why // matters"
+    code={`# Wrong:
+n = 4
+n = n / 2          # n is now 2.0 (a float)
+print(n, type(n))
+
+# Right:
+n = 4
+n = n // 2         # n is now 2 (an int)
+print(n, type(n))`}
+  />
+
+  <Callout tone="pitfall" title="Why the / version is dangerous">
+    <p>
+      With <code>/</code>, <code>n</code> becomes a float. The condition
+      <code>n != 1</code> may behave unpredictably as rounding accumulates.
+      For some inputs you get infinite loops; for others you get
+      off-by-something step counts. The test <code>test_returns_int_not_float</code>
+      catches this. The classic <code>test_n_27_the_famous_one</code> times
+      out if you use <code>/</code>.
+    </p>
+  </Callout>
+
+  <h2>Why n = 27 is famous</h2>
+  <p>
+    The sequence takes <strong>111 steps</strong> and reaches a peak of
+    <strong>9232</strong> before coming down. Yet 27 isn't special — the
+    sequence is just chaotic. From Think Python §7.3:
+    <em> "So far, no one has been able to prove [it terminates for all positive
+    n] or disprove it."</em>
+  </p>
+
+  <h2>Acceptance criteria</h2>
+  <ul>
+    <li>All 7 tests pass</li>
+    <li>Uses a <code>while</code> loop (not recursion)</li>
+    <li>Uses <code>//</code> for the even step (not <code>/</code>)</li>
+    <li>Returns an <code>int</code></li>
+  </ul>
+</Lecture>

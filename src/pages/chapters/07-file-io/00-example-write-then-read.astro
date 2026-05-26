@@ -1,0 +1,69 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="07-file-io"
+  lessonSlug="00-example-write-then-read"
+  hook="Three tiny functions — write a file, read it back as a string, read it as a list of lines. The `with` statement guarantees the file gets closed."
+>
+  <Callout tone="note" title="Pyodide note">
+    <p>
+      Pyodide has a virtual in-memory filesystem, so the snippets below DO
+      work in your browser — just don't expect them to persist after the tab
+      closes. In WolfCode (real Python), these write to real files.
+    </p>
+  </Callout>
+
+  <h2>The three functions</h2>
+  <CodePlayground
+    autoRun
+    code={`def write_file(path, content):
+    with open(path, "w") as f:
+        f.write(content)
+
+def read_file(path):
+    with open(path, "r") as f:
+        return f.read()
+
+def read_lines(path):
+    with open(path, "r") as f:
+        return [line.rstrip("\\n") for line in f]
+
+# Roundtrip
+write_file("demo.txt", "Hello, world!\\nLine two.\\nLine three.\\n")
+print("--- read_file ---")
+print(read_file("demo.txt"))
+print("--- read_lines ---")
+for i, line in enumerate(read_lines("demo.txt"), 1):
+    print(f"{i}: {line!r}")`}
+  />
+
+  <Callout tone="note" title="Source: ATBS ch.9">
+    <p>
+      <em>"The with keyword is recommended for opening files because it
+      automatically calls close() when the code block ends."</em>
+    </p>
+  </Callout>
+
+  <h2>Three modes</h2>
+  <table class="text-sm">
+    <thead><tr><th>Mode</th><th>Effect on existing file</th><th>Use case</th></tr></thead>
+    <tbody>
+      <tr><td><code>"r"</code></td><td>(default) read-only, opens at start</td><td>Read existing data</td></tr>
+      <tr><td><code>"w"</code></td><td><strong>erases</strong> then writes</td><td>Overwrite outputs</td></tr>
+      <tr><td><code>"a"</code></td><td>appends to the end</td><td>Logs, audit trails</td></tr>
+    </tbody>
+  </table>
+
+  <Callout tone="pitfall" title="f.write does NOT add a newline">
+    <p>
+      Unlike <code>print(...)</code>, <code>f.write("Hello")</code> writes
+      exactly 5 bytes. Two calls produce <code>HelloWorld</code>, not
+      <code>Hello\nWorld</code>. Always include the newline yourself when
+      you want line-per-write behavior.
+    </p>
+  </Callout>
+</Lecture>

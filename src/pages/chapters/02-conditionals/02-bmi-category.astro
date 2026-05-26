@@ -1,0 +1,80 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+import Quiz from '../../../components/Quiz.astro';
+---
+
+<Lecture
+  chapterSlug="02-conditionals"
+  lessonSlug="02-bmi-category"
+  hook="Same elif chain — but now the technique is monotonic ordering: by going low-to-high, each branch's condition becomes a single upper bound. No and needed."
+>
+  <h2>The thresholds</h2>
+  <ul>
+    <li><code>bmi &lt; 18.5</code> → <code>"Underweight"</code></li>
+    <li><code>18.5 &lt;= bmi &lt; 25</code> → <code>"Normal"</code></li>
+    <li><code>25 &lt;= bmi &lt; 30</code> → <code>"Overweight"</code></li>
+    <li><code>bmi &gt;= 30</code> → <code>"Obese"</code></li>
+  </ul>
+
+  <h2>The cleanest pattern</h2>
+  <CodePlayground
+    autoRun
+    code={`def bmi_category(bmi):
+    if bmi < 18.5:
+        return "Underweight"
+    elif bmi < 25:
+        return "Normal"
+    elif bmi < 30:
+        return "Overweight"
+    else:
+        return "Obese"
+
+for value in [17.0, 22.0, 27.5, 31.0, 18.5, 25.0, 30.0]:
+    print(f"bmi_category({value:>5}) = {bmi_category(value)}")`}
+  />
+
+  <Callout tone="tip" title="Why each elif is a single comparison">
+    <p>
+      By the time Python reaches <code>elif bmi &lt; 25</code>, it already knows
+      <code>bmi &gt;= 18.5</code> — otherwise the first branch would have
+      returned. So <code>elif bmi &lt; 25</code> actually expresses
+      <code>18.5 &lt;= bmi &lt; 25</code> implicitly.
+    </p>
+  </Callout>
+
+  <h2>Verbose alternative (also correct)</h2>
+  <CodePlayground
+    caption="Defensive — survives someone reordering branches"
+    code={`def bmi_category(bmi):
+    if bmi < 18.5:
+        return "Underweight"
+    elif 18.5 <= bmi < 25:
+        return "Normal"
+    elif 25 <= bmi < 30:
+        return "Overweight"
+    elif bmi >= 30:
+        return "Obese"
+
+print(bmi_category(22))
+print(bmi_category(18.5))
+print(bmi_category(25))`}
+  />
+
+  <Quiz
+    question="What does bmi_category(25.0) return with the LOW-TO-HIGH version?"
+    choices={[
+      { text: '"Normal"', explain: "Check: 25.0 < 25 is False. So we move to elif bmi < 30 — True. Returns 'Overweight'." },
+      { text: '"Overweight"', correct: true, explain: "Right. 25.0 < 25 is False, 25.0 < 30 is True. The boundary belongs to the upper category." },
+      { text: '"Obese"', explain: "Only when bmi >= 30. 25 is not >= 30." },
+      { text: 'None', explain: "All branches are mutually exclusive and exhaustive — one must match." },
+    ]}
+  />
+
+  <h2>Now you try</h2>
+  <p>
+    Open <code>02-bmi-category.py</code>. Implement the function — the autograder
+    runs 7 tests covering each category plus the three boundary values.
+  </p>
+</Lecture>

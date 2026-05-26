@@ -1,0 +1,82 @@
+---
+import Site from '../layouts/Site.astro';
+import KCBadge from '../components/KCBadge.astro';
+import { chapters, lessonPath } from '../data/course';
+---
+
+<Site title="CSC 141">
+  <section class="mx-auto max-w-5xl px-6 pt-20 pb-12">
+    <p class="text-xs font-mono uppercase tracking-[0.22em] text-accent">Fall 2026 · Wolfcode</p>
+    <h1 class="mt-3 text-5xl font-bold tracking-tight text-ink-50 sm:text-6xl">
+      Computer Science I.
+    </h1>
+    <p class="mt-3 max-w-prose font-serif text-xl italic text-ink-200">
+      An introduction to programming using Python.
+    </p>
+    <p class="mt-5 max-w-prose text-[17px] leading-[1.75] text-ink-100/90">
+      Topics covered include basic program design; program flow including decisions, functions, and
+      loops; command-line and file input/output; variables and types; and string and sequence
+      processing.
+    </p>
+
+    <div class="mt-8 inline-flex items-center gap-3 rounded-xl border border-ink-700/50 bg-ink-900/40 px-5 py-3 text-sm text-ink-200">
+      <span class="inline-block h-2 w-2 rounded-full bg-accent-mint animate-pulse"></span>
+      Examples on this site run in your browser — no install. Open the matching exercise in
+      <span class="font-medium text-ink-50">WolfCode</span> to submit.
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-5xl px-6 pb-24">
+    <h2 class="text-sm font-mono uppercase tracking-[0.18em] text-ink-300">Course outline</h2>
+
+    <div class="mt-6 space-y-12">
+      {chapters.map((chapter, ci) => (
+        <div>
+          <div class="flex items-baseline justify-between border-b border-ink-700/40 pb-3">
+            <div>
+              <div class="text-xs font-mono uppercase tracking-wider text-ink-300">
+                Chapter {String(ci + 1).padStart(2, '0')}
+              </div>
+              <h3 class="mt-1 text-2xl font-semibold tracking-tight text-ink-50">
+                {chapter.title}
+              </h3>
+              <p class="mt-1 font-serif italic text-ink-200">{chapter.title_zh}</p>
+            </div>
+            <div class="text-sm text-ink-300">
+              ≈ {chapter.estimated_minutes} min · {chapter.lessons.length} lessons
+            </div>
+          </div>
+
+          <p class="mt-4 max-w-prose text-ink-100/85">{chapter.summary}</p>
+
+          <ol class="mt-6 grid gap-3 sm:grid-cols-3">
+            {chapter.lessons.map((lesson, li) => (
+              <li>
+                <a
+                  href={lessonPath(chapter.slug, lesson.slug)}
+                  class="group flex h-full flex-col justify-between rounded-xl border border-ink-700/50 bg-ink-900/40 p-5 transition hover:border-accent/50 hover:bg-ink-800/60"
+                >
+                  <div>
+                    <div class="text-xs font-mono text-ink-300">
+                      {String(ci + 1).padStart(2, '0')}.{String(li + 1).padStart(2, '0')}
+                    </div>
+                    <div class="mt-1 text-[17px] font-medium text-ink-50 group-hover:text-accent transition-colors">
+                      {lesson.title}
+                    </div>
+                    <div class="mt-0.5 font-serif text-sm italic text-ink-200">
+                      {lesson.title_zh}
+                    </div>
+                  </div>
+                  <div class="mt-4 flex flex-wrap items-center gap-2">
+                    {lesson.kc.map((kc) => <KCBadge kc={kc} />)}
+                    <span class="ml-auto text-xs text-ink-300">{lesson.estimated_minutes}m</span>
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ))}
+    </div>
+  </section>
+</Site>

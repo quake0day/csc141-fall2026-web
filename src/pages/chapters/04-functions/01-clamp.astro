@@ -1,0 +1,72 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+import Quiz from '../../../components/Quiz.astro';
+---
+
+<Lecture
+  chapterSlug="04-functions"
+  lessonSlug="01-clamp"
+  hook="The smallest useful function with multiple parameters. Every UI slider, audio mixer, and game has this."
+>
+  <h2>The problem</h2>
+  <p>
+    Return <code>value</code> confined to <code>[lo, hi]</code>. Below
+    range → return <code>lo</code>. Above → return <code>hi</code>.
+    Inside → return <code>value</code>.
+  </p>
+
+  <h2>The pattern</h2>
+  <CodePlayground
+    autoRun
+    code={`def clamp(value, lo, hi):
+    if value < lo:
+        return lo
+    elif value > hi:
+        return hi
+    else:
+        return value
+
+for v in [5, -3, 99, 0, 10, -5]:
+    print(f"clamp({v:>3}, 0, 10) = {clamp(v, 0, 10)}")`}
+  />
+
+  <h2>Early-return form (also fine)</h2>
+  <CodePlayground
+    caption="return exits the function — no else needed"
+    code={`def clamp(value, lo, hi):
+    if value < lo:
+        return lo
+    if value > hi:
+        return hi
+    return value         # only reached if neither earlier return fired
+
+print(clamp(5, 0, 10), clamp(-3, 0, 10), clamp(99, 0, 10))`}
+  />
+
+  <Callout tone="pitfall" title="Forgetting a branch">
+    <p>
+      A common bug: forget the final <code>return value</code>. For inputs
+      inside the range, both <code>if</code>s are false, the function falls
+      off the end and returns <code>None</code>. Python won't warn you.
+      The test <code>test_inside</code> is the one that catches it.
+    </p>
+  </Callout>
+
+  <Quiz
+    question="clamp(5, 0, 10) — what does this return?"
+    choices={[
+      { text: "0",   explain: "0 is only returned when value < lo. 5 is not less than 0." },
+      { text: "10",  explain: "10 is only returned when value > hi. 5 is not greater than 10." },
+      { text: "5",   correct: true, explain: "Right. 5 is inside [0, 10], so the function returns value unchanged." },
+      { text: "None", explain: "Only if you forgot the else branch! That's a common bug — the test test_inside catches it." },
+    ]}
+  />
+
+  <h2>Now you try</h2>
+  <p>
+    Open <code>01-clamp.py</code>. 6 tests including both boundaries and a
+    negative-range case.
+  </p>
+</Lecture>

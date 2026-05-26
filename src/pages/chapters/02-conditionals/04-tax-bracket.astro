@@ -1,0 +1,79 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="02-conditionals"
+  lessonSlug="04-tax-bracket"
+  hook="Combines every Chapter 2 skill in a problem you'd actually solve at a job. Marginal tax brackets — same shape as shipping tiers, volume discounts, and any tiered pricing."
+>
+  <h2>The brackets (simplified 2024 single-filer)</h2>
+  <ul>
+    <li><code>$0 – $11,600</code> → 10%</li>
+    <li><code>$11,600 – $47,150</code> → 12%</li>
+    <li><code>$47,150 – $100,525</code> → 22%</li>
+    <li><code>$100,525 – $191,950</code> → 24%</li>
+    <li>above <code>$191,950</code> → 32%</li>
+  </ul>
+
+  <Callout tone="warning" title="🔒 no_paste mode is ON">
+    <p>
+      This is a graded homework. The IDE blocks paste in the entry file —
+      type it out yourself. The AI Tutor will help with the <em>shape</em>
+      (max hint level = 2) but won't give you the answer.
+    </p>
+  </Callout>
+
+  <h2>Worked trace — income = $25,000</h2>
+  <ul>
+    <li>First $11,600 at 10% → $1,160.00</li>
+    <li>Remaining $13,400 at 12% → $1,608.00</li>
+    <li><strong>Total: $2,768.00</strong></li>
+  </ul>
+
+  <h2>Pattern: start from the prior buckets, then add the partial</h2>
+  <CodePlayground
+    caption="Sketch of the pattern (not the full solution)"
+    code={`def income_tax(income):
+    if income <= 11_600:
+        total = income * 0.10
+    elif income <= 47_150:
+        # First bracket fully consumed (1160) + 12% of the rest in this bracket
+        total = 1_160 + (income - 11_600) * 0.12
+    elif income <= 100_525:
+        # Add the next full bracket and the partial 22% one
+        total = 1_160 + 35_550 * 0.12 + (income - 47_150) * 0.22
+    # ... continue for the 24% and 32% brackets ...
+    else:
+        total = 0  # replace with your formula
+    return round(total, 2)
+
+print(f"\${income_tax(25_000):,.2f}")    # → 2768.00`}
+  />
+
+  <h2>Acceptance criteria</h2>
+  <ul>
+    <li>All 8 tests pass (target ≥ 7/8 per <code>tests_pass_required</code>)</li>
+    <li><code>income_tax(...)</code> returns a <code>float</code></li>
+    <li>All values rounded to 2 decimal places (<code>round(total, 2)</code>)</li>
+    <li>No loops, no extra imports, no extra functions — Ch. 2 toolset only</li>
+  </ul>
+
+  <h2>If you find yourself wanting the full answer…</h2>
+  <p>
+    Re-do the <strong>BMI Category</strong> exercise. This homework is
+    structurally the same problem with extra brackets and arithmetic. The
+    "wanting the answer" feeling is a signal to slow down and re-engage with
+    the simpler version.
+  </p>
+
+  <Callout tone="tip" title="Why this matters">
+    <p>
+      The exact same shape shows up in shipping cost tiers, volume-discount
+      pricing, letter grade → GPA conversion, and game difficulty scaling. If
+      you can write this homework, you can write any of those.
+    </p>
+  </Callout>
+</Lecture>

@@ -1,0 +1,75 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="07-file-io"
+  lessonSlug="04-word-freq"
+  hook="Read → process → write. Five helpers, one orchestrator. The shape of every batch data job."
+>
+  <h2>The five functions</h2>
+  <ul>
+    <li><code>read_words(in_path)</code> — lowercased word list</li>
+    <li><code>count_word_frequencies(words)</code> — dict word→count</li>
+    <li><code>top_n_words(freq, n)</code> — sorted [(word, count), …]</li>
+    <li><code>format_report(top_words)</code> — formatted string</li>
+    <li><code>write_report(in_path, out_path, n)</code> — orchestrator</li>
+  </ul>
+
+  <Callout tone="warning" title="🔒 no_paste mode is ON">
+    <p>Graded homework. Tutor maxes at L2.</p>
+  </Callout>
+
+  <h2>End-to-end</h2>
+  <CodePlayground
+    autoRun
+    code={`with open("input.txt", "w") as f:
+    f.write("the quick brown fox jumps over the lazy dog\\nthe fox is quick and brown\\n")
+
+def read_words(in_path):
+    with open(in_path) as f:
+        return f.read().lower().split()
+
+def count_word_frequencies(words):
+    freq = {}
+    for w in words:
+        freq[w] = freq.get(w, 0) + 1
+    return freq
+
+def top_n_words(freq, n):
+    items = sorted(freq.items(), key=lambda p: (-p[1], p[0]))
+    return items[:n]
+
+def format_report(top_words):
+    return "".join(f"{w}: {c}\\n" for w, c in top_words)
+
+def write_report(in_path, out_path, n=10):
+    words = read_words(in_path)
+    freq = count_word_frequencies(words)
+    top = top_n_words(freq, n)
+    with open(out_path, "w") as f:
+        f.write(format_report(top))
+
+write_report("input.txt", "out.txt", n=5)
+with open("out.txt") as f:
+    print(f.read())`}
+  />
+
+  <Callout tone="tip" title="Why a separate format_report?">
+    <p>
+      Splitting "make the text" from "save the text" lets you test the
+      formatting without touching disk, AND swap the destination (file →
+      stdout → email → API) without re-doing the formatting.
+    </p>
+  </Callout>
+
+  <h2>Acceptance criteria</h2>
+  <ul>
+    <li>All 9 tests pass</li>
+    <li><code>write_report</code> calls at least 3 of the 4 helpers</li>
+    <li><code>top_n_words</code> sorts count-desc, then alphabetical-asc</li>
+    <li><code>format_report</code> produces <code>"word: count\n"</code> per entry</li>
+  </ul>
+</Lecture>

@@ -1,0 +1,82 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="02-conditionals"
+  lessonSlug="00-example-sign-of-number"
+  hook="Three mutually exclusive outcomes → if / elif / else. The simplest possible 'chained conditional' from Think Python §5.5, end-to-end."
+>
+  <h2>The problem</h2>
+  <p>
+    Write <code>sign(n)</code> so that it returns <code>"positive"</code>,
+    <code>"negative"</code>, or <code>"zero"</code> depending on <code>n</code>.
+    This is a worked example (<strong>kind = example</strong>): read it, run it,
+    modify it. The autograder will pass without any changes.
+  </p>
+
+  <h2>The pattern</h2>
+  <CodePlayground
+    autoRun
+    caption="Click ▶ Run — predict the output first"
+    code={`def sign(n):
+    if n > 0:
+        return "positive"
+    elif n < 0:
+        return "negative"
+    else:                       # only reachable when n == 0
+        return "zero"
+
+for n in [5, -3, 0, 100, -0.0001]:
+    print(f"sign({n!r:>9}) = {sign(n)}")`}
+  />
+
+  <Callout tone="note" title="Source: Think Python §5.5">
+    <p>
+      <em>"Each condition is checked in order. If the first is false, the next is
+      checked, and so on. If one of them is true, the corresponding branch
+      executes, and the statement ends. Even if more than one condition is true,
+      only the first true branch executes."</em>
+    </p>
+  </Callout>
+
+  <h2>Why not three separate <code>if</code>s?</h2>
+  <p>
+    A common beginner version works only because each branch has a
+    <code>return</code> — but it does extra checks and is easier to break with
+    a refactor:
+  </p>
+  <CodePlayground
+    caption="Works but wastes effort"
+    code={`def sign_buggy(n):
+    if n > 0:
+        return "positive"
+    if n < 0:                # always checked, even when n > 0
+        return "negative"
+    if n == 0:
+        return "zero"
+
+print(sign_buggy(5))
+print(sign_buggy(-3))`}
+  />
+  <p>
+    The <code>elif</code> version makes the intent explicit: these are
+    alternatives, not three independent questions.
+  </p>
+
+  <h2>Trace it by hand</h2>
+  <ul>
+    <li><code>n = 5</code> → first condition true → returns <code>"positive"</code></li>
+    <li><code>n = -3</code> → first false, second true → returns <code>"negative"</code></li>
+    <li><code>n = 0</code> → both conditions false → <code>else</code> fires → returns <code>"zero"</code></li>
+  </ul>
+
+  <h2>Next</h2>
+  <p>
+    Open the next lesson — <strong>Letter Grade</strong> — which uses the
+    exact same pattern but with <em>five</em> branches and an order-of-branches
+    trap.
+  </p>
+</Lecture>

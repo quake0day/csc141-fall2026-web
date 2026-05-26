@@ -1,0 +1,51 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+import Quiz from '../../../components/Quiz.astro';
+---
+
+<Lecture
+  chapterSlug="05-lists"
+  lessonSlug="01-list-basics"
+  hook="The most important habit in Think Python ch.10: don't mutate your caller's list. Copy first."
+>
+  <h2>The two functions</h2>
+  <CodePlayground
+    autoRun
+    code={`def take_first_n(t, n):
+    return t[:n]                # slicing handles overshoot & zero gracefully
+
+def with_appended(t, x):
+    result = t[:]               # copy first
+    result.append(x)            # modify the copy
+    return result
+
+a = [1, 2, 3]
+print(with_appended(a, 99))     # [1, 2, 3, 99]
+print(a)                        # [1, 2, 3]  ← caller's list unchanged
+
+print(take_first_n([1, 2, 3, 4, 5], 3))    # [1, 2, 3]
+print(take_first_n([1, 2], 10))            # [1, 2]   (overshoot is OK)
+print(take_first_n([1, 2, 3], 0))          # []       (zero is OK)`}
+  />
+
+  <Callout tone="pitfall" title="The mutation trap">
+    <p>
+      <code>t.append(x)</code> modifies <code>t</code> — the caller's list.
+      That's almost never what they wanted. The autograder's
+      <code>test_with_appended_does_not_mutate</code> catches this.
+    </p>
+  </Callout>
+
+  <Quiz
+    question="Which of these returns [1, 2, 3, 99] AND leaves the caller's list intact?"
+    choices={[
+      { text: "t.append(99); return t",            explain: "Mutates t. The caller's list is now also [1, 2, 3, 99]." },
+      { text: "result = t[:]; result.append(99); return result", correct: true, explain: "Right. Copy first, then modify the copy." },
+      { text: "return t[:] + [99]",                explain: "Also correct! Both this and the copy-then-append are idiomatic." },
+      { text: "return t + [99]",                   explain: "Also correct. + creates a new list (TP §10.4)." },
+    ]}
+    hint="Multiple right answers — but the t.append(t)... one is the trap."
+  />
+</Lecture>

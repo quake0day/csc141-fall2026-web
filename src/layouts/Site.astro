@@ -1,0 +1,71 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  pageType?: 'home' | 'lecture' | 'chapter';
+}
+
+const { title, description, pageType = 'home' } = Astro.props;
+const fullTitle = title === 'CSC 141' ? 'CSC 141 — WolfCode' : `${title} · CSC 141`;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description ?? 'Computer Science I — Python, taught in WolfCode.'} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Source+Serif+4:wght@400;600&display=swap"
+    />
+  </head>
+  <body class="font-sans antialiased">
+    <header class="border-b border-ink-700/50 bg-ink-950/60 backdrop-blur-sm sticky top-0 z-40">
+      <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+        <a href="/" class="flex items-center gap-2.5 group">
+          <span class="inline-flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-accent to-ink-500 text-ink-950 font-bold text-sm shadow-lg shadow-accent/20 group-hover:shadow-accent/40 transition-shadow">W</span>
+          <span class="text-sm font-medium tracking-wide text-ink-100">WolfCode · CSC 141</span>
+        </a>
+        <nav class="flex items-center gap-5 text-sm text-ink-200">
+          <a href="/" class="hover:text-ink-50 transition-colors">Outline</a>
+          <a href="/chapters/01-variables-types/" class="hover:text-ink-50 transition-colors">Ch. 1</a>
+          <a
+            href="https://github.com/quake0day/csc141-fall2026"
+            class="text-ink-300 hover:text-ink-50 transition-colors"
+            >GitHub</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="mt-24 border-t border-ink-700/50 py-10">
+      <div class="mx-auto max-w-6xl px-6 text-sm text-ink-300">
+        <p>
+          CSC 141 · Computer Science I · Fall 2026 · Adapted from
+          <a href="https://greenteapress.com/wp/think-python-2e/" class="text-accent hover:underline"
+            >Think Python</a
+          >
+          (Allen Downey, CC BY-NC) and
+          <a href="https://automatetheboringstuff.com/" class="text-accent hover:underline"
+            >Automate the Boring Stuff</a
+          >
+          (Al Sweigart, CC BY-NC-SA).
+        </p>
+        <p class="mt-2 text-ink-300/70">
+          Built with WolfCode. Code examples run in your browser via Pyodide.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

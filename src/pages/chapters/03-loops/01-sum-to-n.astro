@@ -1,0 +1,81 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+import Quiz from '../../../components/Quiz.astro';
+---
+
+<Lecture
+  chapterSlug="03-loops"
+  lessonSlug="01-sum-to-n"
+  hook="The accumulator pattern — initialize / update / return — appears in every Chapter 3 lesson and most of the rest of the course."
+>
+  <h2>The problem</h2>
+  <p>
+    Implement <code>sum_to_n(n)</code> returning <code>1 + 2 + 3 + ... + n</code>.
+    The autograder requires a <code>for</code> loop — no closed-form formula.
+  </p>
+
+  <h2>The accumulator pattern</h2>
+  <CodePlayground
+    autoRun
+    code={`def sum_to_n(n):
+    total = 0                      # initialize before the loop
+    for i in range(1, n + 1):      # iterate 1, 2, ..., n
+        total += i                 # update inside the loop
+    return total
+
+print(sum_to_n(5))      # → 15
+print(sum_to_n(100))    # → 5050
+print(sum_to_n(0))      # → 0  (empty sum)`}
+  />
+
+  <h2>The <code>+ 1</code> gotcha</h2>
+  <CodePlayground
+    caption="What goes wrong without it?"
+    code={`def sum_to_n_BUGGY(n):
+    total = 0
+    for i in range(1, n):          # ✗ missing the + 1
+        total += i
+    return total
+
+print(sum_to_n_BUGGY(5))    # → 10, not 15 — last term (5) is missing`}
+  />
+
+  <Callout tone="tip" title="range(start, stop) is exclusive at stop">
+    <p>
+      <code>range(1, 5)</code> produces <code>1, 2, 3, 4</code> — stops
+      <em>before</em> reaching <code>5</code>. To iterate 1..n inclusive,
+      you need <code>range(1, n + 1)</code>.
+    </p>
+  </Callout>
+
+  <h2>Why initialize before the loop?</h2>
+  <CodePlayground
+    caption="Predict the output — then run."
+    code={`def sum_to_n_BUGGY2(n):
+    for i in range(1, n + 1):
+        total = 0                  # ✗ resets every iteration
+        total += i
+    return total
+
+print(sum_to_n_BUGGY2(5))    # returns 5 (the last i), not 15`}
+  />
+
+  <Quiz
+    question="sum_to_n(0) returns:"
+    choices={[
+      { text: "An error",  explain: "It runs fine — range(1, 1) is just empty, the loop body never executes." },
+      { text: "0", correct: true, explain: "Right. The loop body runs zero times, so `total` stays at its initial value 0. That IS the empty sum." },
+      { text: "1", explain: "Off by one — but no, the loop doesn't run at all. total stays at 0." },
+      { text: "None", explain: "The function explicitly returns total, which was initialized to 0." },
+    ]}
+  />
+
+  <h2>Now you try</h2>
+  <p>
+    Open <code>01-sum-to-n.py</code> in WolfCode. The autograder runs 5 tests
+    including <code>n = 0</code> and a check that you actually used a
+    <code>for</code> loop (not the closed-form formula).
+  </p>
+</Lecture>

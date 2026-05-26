@@ -1,0 +1,90 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+import Quiz from '../../../components/Quiz.astro';
+---
+
+<Lecture
+  chapterSlug="02-conditionals"
+  lessonSlug="01-letter-grade"
+  hook="Same elif chain as the example — but with five branches and an order-of-branches trap that bites almost everyone the first time."
+>
+  <h2>Specification</h2>
+  <p>Implement <code>letter_grade(score)</code>:</p>
+  <ul>
+    <li><code>score &gt;= 90</code> → <code>"A"</code></li>
+    <li><code>score &gt;= 80</code> → <code>"B"</code></li>
+    <li><code>score &gt;= 70</code> → <code>"C"</code></li>
+    <li><code>score &gt;= 60</code> → <code>"D"</code></li>
+    <li><code>score &lt; 60</code> → <code>"F"</code></li>
+  </ul>
+
+  <h2>The trap</h2>
+  <CodePlayground
+    caption="What does this return for score = 95?  Predict first."
+    code={`def letter_grade(score):
+    if score >= 60:
+        return "D"
+    elif score >= 70:
+        return "C"
+    elif score >= 80:
+        return "B"
+    elif score >= 90:
+        return "A"
+    else:
+        return "F"
+
+print(letter_grade(95))
+print(letter_grade(72))
+print(letter_grade(50))`}
+  />
+
+  <Callout tone="pitfall" title="Why this is wrong">
+    <p>
+      For <code>95</code>, the first branch (<code>&gt;= 60</code>) is already
+      true → returns <code>"D"</code>. Python doesn't look ahead. From Think
+      Python §5.5: <em>"Even if more than one condition is true, only the first
+      true branch executes."</em>
+    </p>
+  </Callout>
+
+  <h2>The fix: order high-to-low</h2>
+  <CodePlayground
+    autoRun
+    code={`def letter_grade(score):
+    if score >= 90:
+        return "A"
+    elif score >= 80:
+        return "B"
+    elif score >= 70:
+        return "C"
+    elif score >= 60:
+        return "D"
+    else:
+        return "F"
+
+# Boundary tests — these matter to the autograder:
+for s in [95, 90, 89, 80, 70, 60, 59, 0]:
+    print(f"letter_grade({s:>3}) = {letter_grade(s)}")`}
+  />
+
+  <Quiz
+    question="With the BROKEN ordering above, letter_grade(95) returns:"
+    choices={[
+      { text: '"A"', explain: "If only — but the first branch (>= 60) is already true, so we never reach the >= 90 branch." },
+      { text: '"B"', explain: "Same issue. We exit at the first matching elif." },
+      { text: '"D"', correct: true, explain: "Right. The branches are tested in order and the first match returns. 95 >= 60 fires first." },
+      { text: 'Error', explain: "The code runs fine — it just returns the wrong letter." },
+    ]}
+    hint="Read Think Python §5.5 again if this surprises you."
+  />
+
+  <h2>Now you try in WolfCode</h2>
+  <p>
+    Open <code>01-letter-grade.py</code> and write the correct version. The
+    autograder checks all 8 cases including <code>90</code>, <code>60</code>,
+    and <code>59</code> (boundaries). The Tutor is enabled at L1–L3 — L4 is off
+    by design.
+  </p>
+</Lecture>

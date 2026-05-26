@@ -1,0 +1,52 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="06-string-algos"
+  lessonSlug="03-find-first"
+  hook="Think Python's first example of `return` inside a loop. Search pattern with early exit."
+>
+  <CodePlayground
+    autoRun
+    code={`def find_letter(word, letter):
+    for i in range(len(word)):
+        if word[i] == letter:
+            return i         # found it — exit immediately
+    return -1                # not found
+
+print(find_letter("banana", "a"))    # 1
+print(find_letter("banana", "z"))    # -1
+print(find_letter("", "a"))          # -1`}
+  />
+
+  <Callout tone="note" title="Source: Think Python §8.6">
+    <p>
+      <em>"This is the first example we have seen of a return statement
+      inside a loop. If word[index] == letter, the function breaks out of
+      the loop and returns immediately."</em>
+    </p>
+  </Callout>
+
+  <h2>The same shape — return the VALUE, not the index</h2>
+  <CodePlayground
+    code={`def first_word_with(words, letter):
+    for w in words:
+        if w.startswith(letter):
+            return w
+    return None
+
+print(first_word_with(["the", "quick", "brown"], "q"))    # "quick"
+print(first_word_with(["the", "quick", "brown"], "z"))    # None`}
+  />
+
+  <Callout tone="pitfall" title="Don't put 'return -1' inside the loop's else">
+    <p>
+      A common bug: <code>return -1</code> inside an <code>else</code> branch
+      makes the function bail after checking ONLY index 0. The
+      "not found" return must be AFTER the loop.
+    </p>
+  </Callout>
+</Lecture>

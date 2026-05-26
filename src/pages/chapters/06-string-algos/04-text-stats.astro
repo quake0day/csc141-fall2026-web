@@ -1,0 +1,65 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="06-string-algos"
+  lessonSlug="04-text-stats"
+  hook="Six functions — five tiny helpers and one assembler. The shape of every text-processing pipeline."
+>
+  <h2>The six functions</h2>
+  <ul>
+    <li><code>char_count(text)</code> — non-whitespace chars</li>
+    <li><code>word_count(text)</code> — whitespace-split words</li>
+    <li><code>longest_word(words)</code> — first on ties</li>
+    <li><code>unique_word_count(words)</code> — distinct (use <code>len(set(words))</code>)</li>
+    <li><code>starts_with_count(words, prefix)</code> — filter comprehension</li>
+    <li><code>text_stats(text)</code> — assembles dict, calls the helpers</li>
+  </ul>
+
+  <Callout tone="warning" title="🔒 no_paste mode is ON">
+    <p>Graded homework. Type it. Tutor maxes at L2.</p>
+  </Callout>
+
+  <h2>The orchestrator</h2>
+  <CodePlayground
+    code={`def text_stats(text):
+    words = text.split()
+    return {
+        "chars":         char_count(text),
+        "words":         word_count(text),
+        "longest":       longest_word(words),
+        "unique_words":  unique_word_count(words),
+    }`}
+  />
+
+  <h2>One-line idioms used in the helpers</h2>
+  <CodePlayground
+    code={`# unique count
+print(len(set(["a", "b", "a"])))                   # 2
+
+# starts-with count
+print(len([w for w in ["the", "two", "ten"] if w.startswith("t")]))    # 3
+
+# longest_word (tracking-variable from Ch.3)
+def longest_word(words):
+    if not words: return ""
+    best = words[0]
+    for w in words[1:]:
+        if len(w) > len(best):
+            best = w
+    return best
+
+print(longest_word(["cat", "bird", "dog"]))        # "bird"
+print(longest_word(["one", "two", "ten"]))         # "one"  (first on ties)`}
+  />
+
+  <h2>Acceptance criteria</h2>
+  <ul>
+    <li>All 10 tests pass</li>
+    <li><code>text_stats</code> calls at least 3 of the 4 helpers</li>
+    <li>All helpers handle empty input</li>
+  </ul>
+</Lecture>

@@ -1,0 +1,84 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="03-loops"
+  lessonSlug="00-example-countdown"
+  hook="The textbook's first while-loop example, in 4 lines. The three-step flow of execution that every loop in CSC 141 follows."
+>
+  <h2>The function</h2>
+  <CodePlayground
+    autoRun
+    code={`def countdown(n):
+    while n > 0:
+        print(n)
+        n = n - 1
+    print("Blastoff!")
+
+countdown(3)`}
+  />
+
+  <Callout tone="note" title="Source: Think Python §7.3">
+    <p>
+      <em>"While n is greater than 0, display the value of n and then reduce
+      the value of n by 1. When you get to 0, display the word Blastoff!"</em>
+    </p>
+  </Callout>
+
+  <h2>The three-step flow</h2>
+  <ol>
+    <li>Evaluate the condition (<code>n &gt; 0</code>).</li>
+    <li>If <strong>False</strong> → exit, continue after the loop.</li>
+    <li>If <strong>True</strong> → run the body, then <strong>go back to step 1</strong>.</li>
+  </ol>
+
+  <h2>What makes it terminate</h2>
+  <p>
+    The line <code>n = n - 1</code> (same as <code>n -= 1</code>) is the only
+    reason this loop ever ends. Delete it and you have an
+    <strong>infinite loop</strong>:
+  </p>
+  <CodePlayground
+    caption="⚠ Don't actually run this — it will hang the browser. Trace it by hand."
+    code={`def countdown_INFINITE(n):
+    while n > 0:
+        print(n)
+        # n never changes — condition stays True forever
+    print("Blastoff!")
+
+# countdown_INFINITE(3)   # ← would loop forever
+print("(skipped — would hang)")`}
+  />
+
+  <Callout tone="pitfall" title="Joke from the textbook">
+    <p>
+      <em>"An endless source of amusement for computer scientists is the
+      observation that the directions on shampoo, 'Lather, rinse, repeat,'
+      are an infinite loop."</em>
+    </p>
+  </Callout>
+
+  <h2>The zero-iteration edge case</h2>
+  <CodePlayground
+    autoRun
+    caption="What does countdown(0) do?"
+    code={`def countdown(n):
+    while n > 0:
+        print(n)
+        n -= 1
+    print("Blastoff!")
+
+countdown(0)
+# Condition is False on the FIRST check.
+# Body runs zero times. Only "Blastoff!" prints.`}
+  />
+
+  <h2>Next</h2>
+  <p>
+    Sum 1..n uses the same shape — initialize before, update inside — but with
+    a <code>for</code> loop instead of <code>while</code>.
+  </p>
+</Lecture>

@@ -1,0 +1,47 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="07-file-io"
+  lessonSlug="02-write-log"
+  hook="Mode 'a' = append. Mode 'w' = erase. Pick the wrong one and your log loses history every call."
+>
+  <CodePlayground
+    autoRun
+    code={`def append_log(path, message):
+    with open(path, "a") as f:
+        f.write(message + "\\n")
+
+def read_log(path):
+    with open(path) as f:
+        return [line.rstrip("\\n") for line in f]
+
+# Three calls — all three messages survive.
+append_log("audit.log", "user logged in")
+append_log("audit.log", "user clicked submit")
+append_log("audit.log", "user logged out")
+
+for line in read_log("audit.log"):
+    print(line)`}
+  />
+
+  <Callout tone="pitfall" title="The 'w' trap — try it">
+    <p>
+      Change <code>"a"</code> to <code>"w"</code> in <code>append_log</code>
+      and re-run. Only the LAST message survives — every call erases the
+      previous content. That's the entire reason mode <code>"a"</code> exists.
+    </p>
+  </Callout>
+
+  <h2>From ATBS ch.9</h2>
+  <Callout tone="note" title="On mode 'w'">
+    <p>
+      <em>"When you call open() with the 'w' mode, the file's contents will
+      be erased."</em> If you want to add content to an existing file, you
+      have to use the 'a' append mode.
+    </p>
+  </Callout>
+</Lecture>

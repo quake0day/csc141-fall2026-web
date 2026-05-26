@@ -1,0 +1,49 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="07-file-io"
+  lessonSlug="01-read-csv"
+  hook="Open a comma-separated file, parse each line into fields. Five lines of body — the rest is edge-case discipline."
+>
+  <h2>The shape</h2>
+  <CodePlayground
+    autoRun
+    code={`# Set up a sample file in Pyodide's virtual FS:
+with open("data.csv", "w") as f:
+    f.write("name,age,city\\nAda,36,London\\nLinus,21,Helsinki\\n\\nGrace,79,New York\\n")
+
+def read_csv_lite(path):
+    records = []
+    with open(path) as f:
+        for line in f:
+            line = line.strip()              # drop trailing \\n
+            if not line:
+                continue                      # skip empty lines
+            records.append(line.split(","))
+    return records
+
+for record in read_csv_lite("data.csv"):
+    print(record)`}
+  />
+
+  <Callout tone="pitfall" title="The trailing-newline trap">
+    <p>
+      A file ending with <code>\n</code> doesn't produce an extra empty
+      iteration on a normal line-by-line read — but blank lines in the middle
+      DO. The <code>if not line: continue</code> guards against both.
+    </p>
+  </Callout>
+
+  <Callout tone="note" title="Why not the csv module?">
+    <p>
+      Python's standard library has a <code>csv</code> module that handles
+      quoted fields, escapes, and dialects correctly. For real CSV data
+      (with commas inside quoted strings), you should use it. We're skipping
+      it here to keep the focus on file iteration + string splitting.
+    </p>
+  </Callout>
+</Lecture>

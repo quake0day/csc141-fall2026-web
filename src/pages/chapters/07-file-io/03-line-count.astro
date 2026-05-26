@@ -1,0 +1,45 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="07-file-io"
+  lessonSlug="03-line-count"
+  hook="One line of body. The lesson is the choice between sum(1 for _ in f) and the explicit loop."
+>
+  <CodePlayground
+    autoRun
+    code={`# Setup
+with open("notes.txt", "w") as f:
+    f.write("hello\\n\\nworld\\n   \\npython\\n")
+
+def total_lines(path):
+    with open(path) as f:
+        return sum(1 for _ in f)
+
+def non_empty_lines(path):
+    with open(path) as f:
+        return sum(1 for line in f if line.strip())
+
+print("total    :", total_lines("notes.txt"))
+print("non-empty:", non_empty_lines("notes.txt"))`}
+  />
+
+  <Callout tone="tip" title="sum(1 for _ in iterable)">
+    <p>
+      The most compact counter idiom in Python. Generates a <code>1</code>
+      per iteration and adds them up. When you don't need the loop variable,
+      name it <code>_</code> by convention.
+    </p>
+  </Callout>
+
+  <Callout tone="pitfall" title="Don't use f.read().count('\n')">
+    <p>
+      It works for small files but loads the whole file into memory. For
+      anything bigger than a few MB, iterate line by line — Python streams
+      the file, using constant memory regardless of file size.
+    </p>
+  </Callout>
+</Lecture>

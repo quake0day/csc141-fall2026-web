@@ -1,0 +1,8 @@
+---
+interface Props { kc: string; }
+const { kc } = Astro.props;
+---
+<span class="inline-flex items-center gap-1.5 rounded-md bg-ink-800/70 px-2 py-0.5 text-[11px] font-mono text-ink-200 ring-1 ring-ink-700/60">
+  <span class="inline-block h-1.5 w-1.5 rounded-full bg-accent/70"></span>
+  {kc}
+</span>

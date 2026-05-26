@@ -1,0 +1,39 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="06-string-algos"
+  lessonSlug="01-word-count"
+  hook="One line. The lesson is which method to use — .split() vs .split(' ')."
+>
+  <CodePlayground
+    autoRun
+    code={`def word_count(text):
+    return len(text.split())
+
+# Default split handles all the edge cases gracefully:
+print(word_count("hello world"))            # 2
+print(word_count("  hello   world  "))      # 2  (extra spaces collapsed)
+print(word_count("a\\tb\\nc"))               # 3  (tabs / newlines work too)
+print(word_count(""))                        # 0
+print(word_count("   "))                     # 0`}
+  />
+
+  <Callout tone="pitfall" title=".split() vs .split(' ')">
+    <p>
+      <code>"hello  world".split()</code> → <code>["hello", "world"]</code> ✓ (collapses runs)<br/>
+      <code>"hello  world".split(' ')</code> → <code>["hello", "", "world"]</code> ✗ (preserves empties)<br/>
+      For "count the words", always use the no-arg form.
+    </p>
+  </Callout>
+
+  <h2>Common wrong answers</h2>
+  <CodePlayground
+    code={`text = "hello world"
+print(len(text))              # 11 — that's the CHARACTER count, not words
+print(text.count(" "))        # 1  — that's the SPACE count, also wrong`}
+  />
+</Lecture>

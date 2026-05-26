@@ -1,0 +1,73 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+import Quiz from '../../../components/Quiz.astro';
+---
+
+<Lecture
+  chapterSlug="03-loops"
+  lessonSlug="03-find-max"
+  hook="The tracking-variable pattern. Initialize with the FIRST element — not zero — and your function survives the all-negatives case."
+>
+  <h2>The pattern</h2>
+  <CodePlayground
+    autoRun
+    code={`def find_max(numbers):
+    best = numbers[0]              # initialize with the FIRST element
+    for x in numbers[1:]:          # loop over the REST
+        if x > best:               # update when we see something bigger
+            best = x
+    return best
+
+print(find_max([3, 1, 4, 1, 5, 9, 2, 6]))   # → 9
+print(find_max([-7, -1, -100]))             # → -1
+print(find_max([42]))                       # → 42`}
+  />
+
+  <h2>The trap: initializing to 0</h2>
+  <CodePlayground
+    caption="What does this return for all-negative input?"
+    code={`def find_max_BUGGY(numbers):
+    best = 0
+    for x in numbers:
+        if x > best:
+            best = x
+    return best
+
+print(find_max_BUGGY([-7, -1, -100]))   # → 0   ← not even in the input!`}
+  />
+
+  <Callout tone="pitfall" title="Why this happens">
+    <p>
+      Every element is less than <code>0</code>, so the <code>if x &gt; best</code>
+      branch never fires. The function returns <code>0</code> — which isn't
+      in the input list at all. The autograder's <code>test_all_negatives</code>
+      catches this.
+    </p>
+  </Callout>
+
+  <Quiz
+    question="What's the SAFEST initial value if the input could be ANY positive or negative numbers (but is non-empty)?"
+    choices={[
+      { text: "0",  explain: "Fails for all-negative input." },
+      { text: "numbers[0]", correct: true, explain: "Right. Initialize with a real element from the input, then loop over the rest." },
+      { text: "min(numbers)", explain: "Would work, but you'd be using a built-in to write find_max — which defeats the lesson." },
+      { text: "1_000_000", explain: "Just as bad as 0 — fails for inputs whose max is larger than 1_000_000." },
+    ]}
+  />
+
+  <h2>The pattern generalizes</h2>
+  <p>
+    The same three-step shape — initialize / update conditionally / return —
+    drives <code>find_min</code>, <code>find_longest_word</code>,
+    <code>count_evens</code>, and a dozen others. Once you can write
+    <code>find_max</code>, you can write all of them.
+  </p>
+
+  <h2>Now you try</h2>
+  <p>
+    Open <code>03-find-max.py</code>. 6 tests including the all-negatives
+    edge case and a check that you didn't use the built-in <code>max()</code>.
+  </p>
+</Lecture>

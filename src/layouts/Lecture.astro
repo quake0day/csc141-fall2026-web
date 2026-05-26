@@ -1,0 +1,63 @@
+---
+import Site from './Site.astro';
+import KCBadge from '../components/KCBadge.astro';
+import LessonNav from '../components/LessonNav.astro';
+import { findLesson } from '../data/course';
+
+interface Props {
+  chapterSlug: string;
+  lessonSlug: string;
+  hook?: string;
+}
+const { chapterSlug, lessonSlug, hook } = Astro.props;
+
+const found = findLesson(chapterSlug, lessonSlug);
+if (!found) throw new Error(`Lesson not found: ${chapterSlug}/${lessonSlug}`);
+const { chapter, lesson } = found;
+
+const wolfcodeHref = `wolfcode://lesson/${lesson.id}`;
+---
+
+<Site title={lesson.title} pageType="lecture">
+  <article class="mx-auto max-w-3xl px-6 pt-14 pb-10">
+    <div class="text-xs font-mono uppercase tracking-[0.18em] text-ink-300">
+      <a href={`/chapters/${chapter.slug}/`} class="text-ink-200 hover:text-accent transition">
+        Chapter · {chapter.title}
+      </a>
+    </div>
+
+    <h1 class="mt-3 text-4xl font-bold tracking-tight text-ink-50 sm:text-5xl">
+      {lesson.title}
+    </h1>
+    {lesson.title_zh && (
+      <p class="mt-1 font-serif text-xl text-ink-200 italic">{lesson.title_zh}</p>
+    )}
+
+    <div class="mt-5 flex flex-wrap items-center gap-2 text-xs text-ink-300">
+      <span>≈ {lesson.estimated_minutes} min</span>
+      <span class="text-ink-700">·</span>
+      {lesson.kc.map((kc) => <KCBadge kc={kc} />)}
+      <span class="text-ink-700">·</span>
+      <a
+        href={wolfcodeHref}
+        class="inline-flex items-center gap-1 rounded-md bg-accent/15 px-2 py-0.5 text-accent ring-1 ring-accent/30 hover:bg-accent/25 transition"
+        title="Open this exercise in WolfCode (if installed)"
+      >
+        <span class="inline-block h-1.5 w-1.5 rounded-full bg-accent"></span>
+        Open in WolfCode
+      </a>
+    </div>
+
+    {hook && (
+      <p class="mt-8 max-w-prose font-serif text-[19px] leading-[1.7] text-ink-100/90 italic">
+        {hook}
+      </p>
+    )}
+
+    <div class="mt-10 lecture-prose">
+      <slot />
+    </div>
+
+    <LessonNav chapterSlug={chapter.slug} lessonSlug={lesson.slug} />
+  </article>
+</Site>

@@ -1,0 +1,54 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="04-functions"
+  lessonSlug="03-default-args"
+  hook="Parameters can have default values. Callers can skip them — or override only the ones they care about, using keyword arguments."
+>
+  <h2>Defaults make optional parameters</h2>
+  <CodePlayground
+    autoRun
+    code={`def greet(name, greeting="Hello", punctuation="!"):
+    return f"{greeting}, {name}{punctuation}"
+
+print(greet("Ada"))
+print(greet("Ada", "Welcome"))
+print(greet("Ada", "Hi", "?"))
+print(greet("Ada", greeting="Good morning"))
+print(greet("Ada", punctuation="."))    # ← skip middle!`}
+  />
+
+  <h2>Keyword arguments — the killer feature</h2>
+  <p>
+    <code>greet("Ada", punctuation=".")</code> leaves <code>greeting</code>
+    at its default <code>"Hello"</code> but overrides the third parameter.
+    Without keyword args you'd have to write <code>greet("Ada", "Hello", ".")</code>
+    — forcing you to remember the default.
+  </p>
+
+  <Callout tone="pitfall" title="Defaults must come last">
+    <pre><code>def f(a, b=1):     # ✓ legal
+def f(a=1, b):     # ✗ SyntaxError</code></pre>
+    <p>Python needs unambiguous rules about positional matching.</p>
+  </Callout>
+
+  <h2>When to use defaults</h2>
+  <ul>
+    <li><strong>Frequently-used good values</strong> — <code>port=8080</code>, <code>timeout=30</code></li>
+    <li><strong>Backwards compatibility</strong> — adding a parameter with a default doesn't break existing callers</li>
+    <li><strong>Optional flags</strong> — <code>def fetch(url, retry=False):</code></li>
+  </ul>
+
+  <Callout tone="warning" title="Don't use mutable defaults yet">
+    <p>
+      <code>def f(items=[]):</code> has a famous gotcha (the list is shared
+      across calls). You'll see it in Chapter 5. For now, stick to immutable
+      defaults: strings, numbers, <code>None</code>, <code>True</code>,
+      <code>False</code>.
+    </p>
+  </Callout>
+</Lecture>

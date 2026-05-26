@@ -1,0 +1,55 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="05-lists"
+  lessonSlug="02-list-comprehension"
+  hook="The map + filter pattern from Think Python §10.7, compressed into one line."
+>
+  <h2>The shape</h2>
+  <pre class="text-sm"><code>[ expression  for  var  in  iterable  if  condition ]</code></pre>
+
+  <CodePlayground
+    autoRun
+    caption="Squares of every even number in 0..n"
+    code={`def squares_of_evens(n):
+    return [x * x for x in range(n) if x % 2 == 0]
+
+print(squares_of_evens(6))     # [0, 4, 16]
+print(squares_of_evens(10))    # [0, 4, 16, 36, 64]`}
+  />
+
+  <h2>Pure filter — leave the expression as the variable</h2>
+  <CodePlayground
+    code={`def words_above_length(words, min_len):
+    return [w for w in words if len(w) > min_len]
+
+print(words_above_length(["a", "bee", "cat", "donkey"], 2))
+# ['bee', 'cat', 'donkey']`}
+  />
+
+  <Callout tone="tip" title="When NOT to use a comprehension">
+    <p>
+      Comprehensions are best for <em>build a list from another sequence</em>.
+      If you have side effects (printing, file writes), use a regular
+      <code>for</code> loop. A comprehension that returns a list of
+      <code>None</code>s is a smell.
+    </p>
+  </Callout>
+
+  <h2>Equivalent loop version</h2>
+  <CodePlayground
+    code={`# These two produce the same list.
+result_a = [x * x for x in range(10) if x % 2 == 0]
+
+result_b = []
+for x in range(10):
+    if x % 2 == 0:
+        result_b.append(x * x)
+
+print(result_a == result_b)    # True`}
+  />
+</Lecture>

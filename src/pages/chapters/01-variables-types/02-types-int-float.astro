@@ -1,0 +1,127 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+import Quiz from '../../../components/Quiz.astro';
+---
+
+<Lecture
+  chapterSlug="01-variables-types"
+  lessonSlug="02-types-int-float"
+  hook="Python's two numeric types — int for whole numbers, float for fractions — look similar but behave differently. Knowing when each one shows up will save you a lot of confusing bugs."
+>
+  <h2>Two kinds of numbers</h2>
+  <p>
+    In Python, <code>3</code> and <code>3.0</code> are not the same value. The
+    first is an <strong>int</strong> (integer); the second is a <strong>float</strong>
+    (floating-point number). You can ask Python which is which:
+  </p>
+
+  <CodePlayground
+    code={`print(type(3))
+print(type(3.0))
+print(type(3 + 4))
+print(type(3 + 4.0))    # mixing int and float → result is float`}
+  />
+
+  <p>
+    The rule for arithmetic: if all operands are <code>int</code>, the result is
+    <code>int</code>. As soon as one <code>float</code> sneaks in, the whole
+    expression "promotes" to <code>float</code>.
+  </p>
+
+  <h2>Operators you'll use every week</h2>
+  <ul>
+    <li><code>+</code>&nbsp; addition</li>
+    <li><code>-</code>&nbsp; subtraction</li>
+    <li><code>*</code>&nbsp; multiplication</li>
+    <li><code>/</code>&nbsp; <strong>true</strong> division — always returns a <code>float</code></li>
+    <li><code>//</code> <strong>floor</strong> division — drops the remainder, returns the smaller type</li>
+    <li><code>%</code>&nbsp; modulo — the remainder</li>
+    <li><code>**</code> exponent — <code>2 ** 10</code> is 1024</li>
+  </ul>
+
+  <CodePlayground
+    caption="The / vs // distinction trips up almost everyone"
+    code={`print(10 / 4)     # → 2.5      (true division, always float)
+print(10 // 4)    # → 2        (floor division, drops the .5)
+print(10 % 4)     # → 2        (the remainder)
+
+# // and % together = "how many full groups, and how many left over?"
+minutes = 137
+hours = minutes // 60
+left  = minutes % 60
+print(hours, "hours", left, "minutes")`}
+  />
+
+  <Callout tone="pitfall" title="/ always returns a float, even when it could be exact">
+    <p>
+      <code>10 / 5</code> evaluates to <code>2.0</code>, not <code>2</code>. If a
+      downstream test asks for an <code>int</code>, you'll need <code>//</code> or
+      <code>int(...)</code>. This catches a lot of students on their first quiz.
+    </p>
+  </Callout>
+
+  <h2>Converting between types</h2>
+  <p>
+    The functions <code>int()</code>, <code>float()</code>, and <code>str()</code>
+    take a value and return a new value of the requested type. They do
+    <strong>not</strong> change the original.
+  </p>
+
+  <CodePlayground
+    code={`x = 5.9
+print(int(x))        # → 5   (truncates toward zero, doesn't round!)
+print(round(x))      # → 6   (this one rounds)
+
+n = 7
+print(float(n))      # → 7.0
+print(str(n))        # → '7'  (now it's a string — useful for printing)
+
+# What int() does to negatives surprises some people:
+print(int(-5.9))     # → -5, not -6`}
+  />
+
+  <Callout tone="tip" title="int() truncates, round() rounds">
+    <p>
+      Reach for <code>int(x)</code> when you want to <em>drop</em> the fractional
+      part. Reach for <code>round(x)</code> when you want the nearest whole
+      number. They give different answers for anything not ending in <code>.5</code>.
+    </p>
+  </Callout>
+
+  <Quiz
+    question="What does this print?  x = 7 / 2  → print(type(x))"
+    choices={[
+      { text: "<class 'int'>",   explain: "Nope — `/` is true division, which always returns a float." },
+      { text: "<class 'float'>", correct: true, explain: "Right. Even though 7 and 2 are both ints, `/` promotes the result to float." },
+      { text: "<class 'number'>", explain: "Python doesn't have a single 'number' type — it has int, float, complex, etc." },
+      { text: "3.5",             explain: "That's the *value* x holds. The question asked for its *type*." },
+    ]}
+  />
+
+  <Quiz
+    question="`x = int(3.9)` — what is x?"
+    choices={[
+      { text: "4 — int() rounds", explain: "Close, but int() *truncates*, not rounds. Use round() if you want rounding." },
+      { text: "3", correct: true, explain: "Right. int() drops everything after the decimal point: 3.9 becomes 3." },
+      { text: "3.0", explain: "int(...) returns an int, not a float. 3.0 would be the float version." },
+      { text: "Error — can't convert a float to int", explain: "This conversion is perfectly legal in Python." },
+    ]}
+  />
+
+  <h2>The exercise in WolfCode</h2>
+  <p>
+    Open <code>02-types-int-float.py</code>. Four variables are set to
+    <code>None</code> — replace each with the correct expression. The tests
+    check both the <em>value</em> and the <em>type</em>.
+  </p>
+
+  <Callout tone="note" title="Hint scaffolding">
+    <p>
+      Read the comment above each blank — it tells you what the expected type is
+      (int or float). If you produce the right number but the wrong type, the
+      test will say so explicitly, e.g. "expected int, got float".
+    </p>
+  </Callout>
+</Lecture>

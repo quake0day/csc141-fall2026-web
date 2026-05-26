@@ -1,0 +1,62 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="04-functions"
+  lessonSlug="00-example-square-cube"
+  hook="The minimum-viable function example — three fruitful functions that compose. def + return + a function calling another."
+>
+  <h2>The three functions</h2>
+  <CodePlayground
+    autoRun
+    code={`def square(n):
+    return n * n
+
+def cube(n):
+    return square(n) * n         # composition: cube uses square
+
+def sum_of_powers(n):
+    return n + square(n) + cube(n)
+
+print(square(5))             # 25
+print(cube(3))               # 27
+print(sum_of_powers(2))      # 14`}
+  />
+
+  <Callout tone="note" title="Source: Think Python §3.4">
+    <p><em>"Once you have defined a function, you can use it inside another function."</em></p>
+  </Callout>
+
+  <h2>Anatomy of <code>def square(n):</code></h2>
+  <ul>
+    <li><code>def</code> — keyword that introduces a function definition</li>
+    <li><code>square</code> — the function's name (same rules as variable names)</li>
+    <li><code>(n)</code> — one parameter</li>
+    <li><code>:</code> — separates header from body</li>
+    <li><code>return n * n</code> — sends the result back to the caller</li>
+  </ul>
+
+  <h2>The fruitful-vs-void trap</h2>
+  <CodePlayground
+    caption="A function that prints isn't the same as one that returns"
+    code={`def square_VOID(n):
+    print(n * n)            # prints but doesn't return
+
+x = square_VOID(5)          # screen shows 25
+print("x is:", x)           # x is: None`}
+  />
+
+  <h2>Composition in action — trace <code>sum_of_powers(2)</code></h2>
+  <ol>
+    <li><code>sum_of_powers(2)</code> evaluates <code>2 + square(2) + cube(2)</code></li>
+    <li><code>square(2)</code> → returns <code>4</code></li>
+    <li><code>cube(2)</code> → calls <code>square(2)</code> → returns 4, then <code>* 2</code> → 8</li>
+    <li>sum: <code>2 + 4 + 8</code> → <strong>14</strong></li>
+  </ol>
+
+  <h2>Next</h2>
+  <p>Try modifying the example, then move to <strong>Clamp</strong> — your first function with three parameters.</p>
+</Lecture>
