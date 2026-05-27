@@ -1,0 +1,52 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="08-cli"
+  lessonSlug="03-argparse-defaults"
+  hook="type= converts strings for you. default= fills in when the flag isn't given. Two changes that turn a toy parser into a real one."
+>
+  <CodePlayground
+    autoRun
+    code={`import argparse
+
+def parse_args(argv):
+    parser = argparse.ArgumentParser(description="Echo a message N times.")
+    parser.add_argument("message")
+    parser.add_argument("--count", type=int, default=1)
+    parser.add_argument("--upper", action="store_true")
+    return parser.parse_args(argv)
+
+a = parse_args(["hello"])
+print(a.message, a.count, a.upper)              # hello 1 False
+
+a = parse_args(["hi", "--count", "3"])
+print(a.message, a.count, a.upper, type(a.count).__name__)
+# hi 3 False int    ← a.count is an INT, not the string "3"
+
+a = parse_args(["wow", "--count", "5", "--upper"])
+print(a.message, a.count, a.upper)              # wow 5 True`}
+  />
+
+  <Callout tone="pitfall" title="The type=int trap">
+    <p>
+      Without <code>type=int</code>, <code>--count 3</code> gives you the
+      <strong>string</strong> <code>"3"</code>. <code>range("3")</code>
+      raises <code>TypeError</code>. Always pair <code>type=</code> with a
+      matching <code>default=</code>.
+    </p>
+  </Callout>
+
+  <h2>What action / type / default each does</h2>
+  <table class="text-sm">
+    <thead><tr><th>Pattern</th><th>Behavior</th></tr></thead>
+    <tbody>
+      <tr><td><code>action="store_true"</code></td><td>Boolean — True if present, False otherwise. No value follows.</td></tr>
+      <tr><td><code>type=int</code></td><td>argparse calls <code>int(value)</code> for you.</td></tr>
+      <tr><td><code>default=1</code></td><td>What <code>args.count</code> is when <code>--count</code> isn't passed.</td></tr>
+    </tbody>
+  </table>
+</Lecture>

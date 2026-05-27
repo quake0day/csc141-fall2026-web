@@ -1,0 +1,44 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="08-cli"
+  lessonSlug="01-sys-argv-sum"
+  hook="argv items are strings. int(x) + int(y) is required — x + y concatenates."
+>
+  <CodePlayground
+    autoRun
+    code={`def sum_args(argv):
+    if len(argv) < 2:
+        return None
+    return int(argv[0]) + int(argv[1])
+
+print(sum_args(["2", "3"]))       # 5
+print(sum_args(["10", "20"]))     # 30
+print(sum_args(["100", "-50"]))   # 50
+print(sum_args(["1"]))            # None
+print(sum_args([]))               # None`}
+  />
+
+  <Callout tone="pitfall" title="The string-concatenation trap">
+    <p>
+      Without <code>int(...)</code>, <code>"2" + "3"</code> evaluates to
+      the string <code>"23"</code>, not the integer <code>5</code>.
+      <code>sys.argv</code> items are <strong>always</strong> strings.
+    </p>
+  </Callout>
+
+  <CodePlayground
+    caption="Verify the bug yourself"
+    code={`# Wrong — string concat:
+print("2" + "3")          # "23"
+print(type("2" + "3"))    # str
+
+# Right:
+print(int("2") + int("3"))         # 5
+print(type(int("2") + int("3")))   # int`}
+  />
+</Lecture>

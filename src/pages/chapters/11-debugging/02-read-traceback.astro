@@ -1,0 +1,80 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="11-debugging"
+  lessonSlug="02-read-traceback"
+  hook="Parse a Python traceback as a string. Read it bottom-up: last line = error type, deepest frame = where the bug is."
+>
+  <h2>Anatomy</h2>
+  <pre class="text-sm font-mono leading-6"><code>Traceback (most recent call last):
+  File "letter_grade.py", line 19, in &lt;module&gt;
+    print(letter_grade(85))
+  File "letter_grade.py", line 12, in letter_grade   ← deepest frame, usually the bug
+    return grade
+NameError: name 'grade' is not defined              ← error type + message</code></pre>
+
+  <h2>The two helpers</h2>
+  <CodePlayground
+    autoRun
+    code={`def error_type(tb):
+    last_line = tb.strip().splitlines()[-1]
+    return last_line.split(":")[0].strip()
+
+def last_frame(tb):
+    filename = ""
+    line_number = 0
+    for raw in tb.splitlines():
+        line = raw.strip()
+        if line.startswith('File "'):
+            rest = line[len('File "'):]
+            close_q = rest.find('"')
+            name = rest[:close_q]
+            after = rest[close_q + 1:]
+            i = after.find("line ")
+            digits = ""
+            for ch in after[i + 5:]:
+                if ch.isdigit():
+                    digits += ch
+                else:
+                    break
+            filename = name
+            line_number = int(digits)
+    return (filename, line_number)
+
+tb = '''Traceback (most recent call last):
+  File "letter_grade.py", line 19, in <module>
+    print(letter_grade(85))
+  File "letter_grade.py", line 12, in letter_grade
+    return grade
+NameError: name 'grade' is not defined'''
+
+print(error_type(tb))       # NameError
+print(last_frame(tb))       # ('letter_grade.py', 12)`}
+  />
+
+  <Callout tone="tip" title="Why the deepest frame">
+    <p>
+      The bottom-most <code>File "..."</code> is where execution actually
+      went wrong. The outer frames are just the call chain that got us
+      there. <strong>Start at the bottom, work outward only if needed.</strong>
+    </p>
+  </Callout>
+
+  <h2>The common runtime errors</h2>
+  <table class="text-sm">
+    <thead><tr><th>Error</th><th>Most likely cause</th></tr></thead>
+    <tbody>
+      <tr><td><code>NameError</code></td><td>Typo or used-before-defined</td></tr>
+      <tr><td><code>TypeError</code></td><td>Wrong type or arg count</td></tr>
+      <tr><td><code>IndexError</code></td><td>Index out of range</td></tr>
+      <tr><td><code>KeyError</code></td><td>Dict key not present</td></tr>
+      <tr><td><code>AttributeError ... NoneType ...</code></td><td>Function returned None; you called .x on it</td></tr>
+      <tr><td><code>RecursionError</code></td><td>Forgot the base case</td></tr>
+      <tr><td><code>ZeroDivisionError</code></td><td>Divided by 0</td></tr>
+    </tbody>
+  </table>
+</Lecture>

@@ -1,0 +1,56 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="10-decomposition"
+  lessonSlug="00-example-distance-incremental"
+  hook="Build distance() in four steps. Each step runs. Each step verifies one new thing. The textbook's most-quoted example of incremental development."
+>
+  <CodePlayground
+    autoRun
+    code={`import math
+
+def area(radius):
+    return math.pi * radius ** 2
+
+def distance(x1, y1, x2, y2):
+    dx = x2 - x1
+    dy = y2 - y1
+    return math.sqrt(dx ** 2 + dy ** 2)
+
+def circle_area(xc, yc, xp, yp):
+    radius = distance(xc, yc, xp, yp)
+    return area(radius)
+
+print("distance:", distance(1, 2, 4, 6))     # 5.0  (3-4-5 triangle)
+print("area(5):", area(5))                   # ~78.54
+print("circle_area:", circle_area(0, 0, 3, 4)) # area of radius 5 circle`}
+  />
+
+  <Callout tone="note" title="Source: Think Python §6.2">
+    <p>
+      <em>"The goal of incremental development is to avoid long debugging
+      sessions by adding and testing only a small amount of code at a time."</em>
+    </p>
+  </Callout>
+
+  <h2>The four-step build</h2>
+  <ol>
+    <li><strong>Skeleton</strong>: <code>return 0.0</code> — verify it runs</li>
+    <li><strong>Compute dx, dy</strong>: print them — verify diff calculation</li>
+    <li><strong>Sum of squares</strong>: print dsquared — verify it equals 25</li>
+    <li><strong>sqrt + remove scaffolding</strong>: final form</li>
+  </ol>
+
+  <Callout tone="tip" title="Composition (§6.3)">
+    <p>
+      <code>circle_area</code> is THREE lines because the hard parts already
+      exist as <code>distance</code> and <code>area</code>. If
+      <code>circle_area</code> is wrong, you have 3 lines to check — and
+      you've already tested the other two functions.
+    </p>
+  </Callout>
+</Lecture>

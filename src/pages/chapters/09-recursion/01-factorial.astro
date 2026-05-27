@@ -1,0 +1,48 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="09-recursion"
+  lessonSlug="01-factorial"
+  hook="The most-quoted recursion in computer science. Two-line body, induction-style correctness."
+>
+  <CodePlayground
+    autoRun
+    code={`def factorial(n):
+    if n == 0:
+        return 1                       # base case
+    return n * factorial(n - 1)        # recursive case
+
+for x in [0, 1, 5, 6, 10]:
+    print(f"factorial({x}) = {factorial(x)}")`}
+  />
+
+  <Callout tone="tip" title="The leap of faith (TP §6.7)">
+    <p>
+      Don't trace the calls. Ask two questions:<br/>
+      <strong>1.</strong> What's the smallest case I can solve directly? <code>factorial(0) == 1</code>.<br/>
+      <strong>2.</strong> If I had <code>factorial(n-1)</code>, how do I get <code>factorial(n)</code>? Multiply by n.<br/>
+      Done. Function correct by induction.
+    </p>
+  </Callout>
+
+  <h2>Trace once, for understanding</h2>
+  <pre class="text-sm overflow-x-auto"><code>factorial(3)        → 3 * factorial(2)
+  factorial(2)      → 2 * factorial(1)
+    factorial(1)    → 1 * factorial(0)
+      factorial(0)  → 1                          ← BASE
+    factorial(1)    → 1 * 1 = 1
+  factorial(2)      → 2 * 1 = 2
+factorial(3)        → 3 * 2 = 6</code></pre>
+
+  <Callout tone="pitfall" title="No loops — that's a different lesson">
+    <p>
+      The autograder rejects <code>for</code> and <code>while</code>. An
+      iterative <code>factorial</code> is a perfectly fine Ch.3 exercise
+      — but here we're building the recursion muscle.
+    </p>
+  </Callout>
+</Lecture>

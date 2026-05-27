@@ -269,6 +269,73 @@ export const chapters = [
       { id: 'csc141-ch7-04-word-freq',               slug: '04-word-freq',               title: 'Homework: Word-Frequency Report', title_zh: '作业: 词频报告', kc: ['python-file-io', 'python-strings', 'python-lists'], kind: 'homework', estimated_minutes: 45 },
     ] satisfies Omit<Lesson, 'chapter'>[],
   },
+  {
+    slug: '08-cli',
+    title: 'Command-Line Interface',
+    title_zh: '命令行接口',
+    summary:
+      'Scripts become tools. sys.argv for the raw approach, argparse for proper ones — ' +
+      'with --help, type validation, defaults, and exit codes for free. Build a Unix wc clone.',
+    estimated_minutes: 110,
+    lessons: [
+      { id: 'csc141-ch8-00-example-sys-argv-greeter', slug: '00-example-sys-argv-greeter', title: 'Walkthrough: sys.argv Greeter', title_zh: '例题: 命令行问候', kc: ['python-cmdline'], kind: 'example',  estimated_minutes:  8 },
+      { id: 'csc141-ch8-01-sys-argv-sum',             slug: '01-sys-argv-sum',             title: 'Sum from argv',                 title_zh: '命令行求和',       kc: ['python-cmdline'], kind: 'exercise', estimated_minutes: 15 },
+      { id: 'csc141-19-argparse-basics',              slug: '02-argparse-basics',          title: 'argparse Basics',               title_zh: 'argparse 入门',    kc: ['python-cmdline'], kind: 'exercise', estimated_minutes: 20 },
+      { id: 'csc141-ch8-03-argparse-defaults',        slug: '03-argparse-defaults',        title: 'argparse Defaults',             title_zh: 'argparse 默认值',  kc: ['python-cmdline'], kind: 'exercise', estimated_minutes: 20 },
+      { id: 'csc141-ch8-04-wc-clone',                 slug: '04-wc-clone',                 title: 'Homework: wc Clone',            title_zh: '作业: wc 克隆',    kc: ['python-cmdline', 'python-file-io', 'python-functions'], kind: 'homework', estimated_minutes: 45 },
+    ] satisfies Omit<Lesson, 'chapter'>[],
+  },
+  {
+    slug: '09-recursion',
+    title: 'Recursion',
+    title_zh: '递归',
+    summary:
+      'A function calls itself. With a base case to stop, recursion is the cleanest way to ' +
+      'express problems that are naturally self-similar — factorial, fibonacci, list ' +
+      'traversal, Euclid’s GCD. Strictly aligned with Think Python §5.7-§5.10 + §6.6-§6.9.',
+    estimated_minutes: 110,
+    lessons: [
+      { id: 'csc141-ch9-00-example-recursive-countdown', slug: '00-example-recursive-countdown', title: 'Walkthrough: Recursive Countdown', title_zh: '例题: 递归倒计时', kc: ['python-recursion'], kind: 'example',  estimated_minutes:  8 },
+      { id: 'csc141-20-factorial',                       slug: '01-factorial',                   title: 'Factorial',                        title_zh: '阶乘',             kc: ['python-recursion'], kind: 'exercise', estimated_minutes: 15 },
+      { id: 'csc141-21-fibonacci',                       slug: '02-fibonacci',                   title: 'Fibonacci',                        title_zh: '斐波那契数列',     kc: ['python-recursion'], kind: 'exercise', estimated_minutes: 20 },
+      { id: 'csc141-ch9-03-sum-list-recursive',          slug: '03-sum-list-recursive',          title: 'Sum List Recursively',             title_zh: '递归求列表和',     kc: ['python-recursion', 'python-lists'], kind: 'exercise', estimated_minutes: 15 },
+      { id: 'csc141-ch9-04-gcd-power',                   slug: '04-gcd-power',                   title: 'Homework: GCD + Power',            title_zh: '作业: 最大公约数 + 幂', kc: ['python-recursion'], kind: 'homework', estimated_minutes: 45 },
+    ] satisfies Omit<Lesson, 'chapter'>[],
+  },
+  {
+    slug: '10-decomposition',
+    title: 'Decomposition',
+    title_zh: '程序分解',
+    summary:
+      'How to write a 200-line program without going crazy. Incremental development ' +
+      '(small steps, scaffolding, test as you go) + composition (assemble small functions ' +
+      'into bigger ones). Strictly aligned with Think Python §3.11, §6.2, §6.3.',
+    estimated_minutes: 110,
+    lessons: [
+      { id: 'csc141-ch10-00-example-distance-incremental', slug: '00-example-distance-incremental', title: 'Walkthrough: Distance (Incremental Build)', title_zh: '例题: 距离 (增量构建)', kc: ['python-decomposition', 'python-functions'], kind: 'example',  estimated_minutes: 10 },
+      { id: 'csc141-ch10-01-hypotenuse',                   slug: '01-hypotenuse',                   title: 'Hypotenuse',                                title_zh: '斜边',                  kc: ['python-decomposition', 'python-functions'], kind: 'exercise', estimated_minutes: 15 },
+      { id: 'csc141-ch10-02-area-shapes',                  slug: '02-area-shapes',                  title: 'Area of Shapes',                            title_zh: '多形状求面积',          kc: ['python-decomposition', 'python-functions'], kind: 'exercise', estimated_minutes: 20 },
+      { id: 'csc141-22-refactor-monolith',                 slug: '03-refactor-monolith',            title: 'Refactor Monolith',                         title_zh: '拆分大函数',            kc: ['python-decomposition', 'python-functions'], kind: 'exercise', estimated_minutes: 25 },
+      { id: 'csc141-ch10-04-gpa-calculator',               slug: '04-gpa-calculator',               title: 'Homework: GPA Calculator',                  title_zh: '作业: GPA 计算器',     kc: ['python-decomposition', 'python-functions'], kind: 'homework', estimated_minutes: 40 },
+    ] satisfies Omit<Lesson, 'chapter'>[],
+  },
+  {
+    slug: '11-debugging',
+    title: 'Debugging',
+    title_zh: '调试',
+    summary:
+      'Syntax / runtime / semantic errors — what each one looks like and how to crack ' +
+      'each. Read tracebacks bottom-up. Print debugging as the workhorse, pdb when print ' +
+      'gets noisy. Strictly aligned with Think Python Appendix A.',
+    estimated_minutes: 100,
+    lessons: [
+      { id: 'csc141-ch11-00-example-print-debug', slug: '00-example-print-debug', title: 'Walkthrough: Print-Debug an Off-by-One', title_zh: '例题: 用 print 调试 off-by-one', kc: ['python-debugging'], kind: 'example',  estimated_minutes:  8 },
+      { id: 'csc141-23-spot-the-bug',             slug: '01-spot-the-bug',        title: 'Spot the Bug',                          title_zh: '找出 bug',                  kc: ['python-debugging'], kind: 'exercise', estimated_minutes: 20 },
+      { id: 'csc141-ch11-02-read-traceback',      slug: '02-read-traceback',      title: 'Read the Traceback',                    title_zh: '读 traceback',              kc: ['python-debugging', 'python-strings'], kind: 'exercise', estimated_minutes: 15 },
+      { id: 'csc141-24-print-vs-pdb',             slug: '03-print-vs-pdb',        title: 'Print vs pdb',                          title_zh: 'print 和 pdb',              kc: ['python-debugging'], kind: 'exercise', estimated_minutes: 20 },
+      { id: 'csc141-ch11-04-fix-the-suite',       slug: '04-fix-the-suite',       title: 'Homework: Fix the Test Suite',          title_zh: '作业: 修复测试套件',        kc: ['python-debugging'], kind: 'homework', estimated_minutes: 40 },
+    ] satisfies Omit<Lesson, 'chapter'>[],
+  },
 ] as const;
 
 export function findLesson(chapterSlug: string, lessonSlug: string) {

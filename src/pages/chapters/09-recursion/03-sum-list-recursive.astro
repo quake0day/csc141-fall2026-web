@@ -1,0 +1,60 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="09-recursion"
+  lessonSlug="03-sum-list-recursive"
+  hook="Apply the same shape to a list instead of a number. Shorter list = smaller problem."
+>
+  <CodePlayground
+    autoRun
+    code={`def sum_list(t):
+    if not t:                       # base case: empty list
+        return 0
+    return t[0] + sum_list(t[1:])   # recursive case
+
+print(sum_list([]))                # 0
+print(sum_list([5]))               # 5
+print(sum_list([1, 2, 3]))         # 6
+print(sum_list([10, 20, 30, 40]))  # 100`}
+  />
+
+  <Callout tone="tip" title="t[1:] is the smaller problem">
+    <p>
+      <code>t[1:]</code> is the list without its first element. Every
+      recursive call gets a list shorter by one — strictly closer to the
+      empty-list base case.
+    </p>
+  </Callout>
+
+  <h2>The same shape, more variations</h2>
+  <CodePlayground
+    code={`def max_list(t):
+    if len(t) == 1: return t[0]
+    rest_max = max_list(t[1:])
+    return t[0] if t[0] > rest_max else rest_max
+
+def list_length(t):
+    if not t: return 0
+    return 1 + list_length(t[1:])
+
+def reverse_list(t):
+    if not t: return []
+    return reverse_list(t[1:]) + [t[0]]
+
+print(max_list([3, 1, 4, 1, 5, 9, 2, 6]))
+print(list_length(["a", "b", "c", "d"]))
+print(reverse_list([1, 2, 3, 4]))`}
+  />
+
+  <Callout tone="pitfall" title="O(n²) because of slicing">
+    <p>
+      <code>t[1:]</code> copies the list each call. For 1000 elements you
+      allocate ~500,000 list cells. Fine for teaching, slow for
+      production — use iteration when n is big.
+    </p>
+  </Callout>
+</Lecture>

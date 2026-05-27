@@ -1,0 +1,58 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="08-cli"
+  lessonSlug="00-example-sys-argv-greeter"
+  hook="The minimum viable CLI program. Take argv as a parameter so it's trivially testable."
+>
+  <CodePlayground
+    autoRun
+    code={`import sys
+
+def greet(argv):
+    if len(argv) < 1:
+        return None
+    name = argv[0]
+    greeting = f"Hello, {name}!"
+    if "--shout" in argv[1:]:
+        greeting = greeting.upper()
+    return greeting
+
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
+    msg = greet(argv)
+    if msg is None:
+        print("Usage: python greeter.py <name> [--shout]")
+        sys.exit(1)
+    print(msg)
+
+# Demo (simulating various CLI invocations):
+print(greet(["Ada"]))
+print(greet(["Ada", "--shout"]))
+print(greet([]))             # → None`}
+  />
+
+  <Callout tone="tip" title="The function-takes-argv pattern">
+    <p>
+      <code>greet(argv)</code> takes the args list as a parameter, NOT
+      reading <code>sys.argv</code> directly. This is the trick that makes
+      CLI code testable: tests call <code>greet(["Ada", "--shout"])</code>
+      with no subprocess or monkey-patching.
+    </p>
+  </Callout>
+
+  <h2><code>sys.argv[1:]</code> — skip the script name</h2>
+  <table class="text-sm">
+    <thead><tr><th>User typed</th><th><code>sys.argv</code></th><th><code>sys.argv[1:]</code></th></tr></thead>
+    <tbody>
+      <tr><td><code>python greeter.py Ada</code></td><td><code>["greeter.py", "Ada"]</code></td><td><code>["Ada"]</code></td></tr>
+      <tr><td><code>python greeter.py Ada --shout</code></td><td><code>["greeter.py", "Ada", "--shout"]</code></td><td><code>["Ada", "--shout"]</code></td></tr>
+      <tr><td><code>python greeter.py</code></td><td><code>["greeter.py"]</code></td><td><code>[]</code></td></tr>
+    </tbody>
+  </table>
+</Lecture>

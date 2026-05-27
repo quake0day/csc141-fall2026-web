@@ -1,0 +1,44 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="10-decomposition"
+  lessonSlug="02-area-shapes"
+  hook="Three one-line helpers + one orchestrator. The orchestrator dispatches by kind and CALLS the helpers — no inline math."
+>
+  <CodePlayground
+    autoRun
+    code={`import math
+
+def area_rectangle(w, h):  return w * h
+def area_triangle(b, h):   return 0.5 * b * h
+def area_circle(r):        return math.pi * r ** 2
+
+def total_area(shapes):
+    total = 0.0
+    for shape in shapes:
+        kind = shape[0]
+        if kind == "rect":
+            total += area_rectangle(shape[1], shape[2])
+        elif kind == "tri":
+            total += area_triangle(shape[1], shape[2])
+        elif kind == "circ":
+            total += area_circle(shape[1])
+    return total
+
+shapes = [("rect", 2, 3), ("tri", 4, 5), ("circ", 1)]
+print(f"Total area: {total_area(shapes):.4f}")     # 19.1416`}
+  />
+
+  <Callout tone="pitfall" title="The 'inline the math' anti-pattern">
+    <p>
+      If you write <code>total += shape[1] * shape[2]</code> inside
+      <code>total_area</code> instead of calling <code>area_rectangle</code>,
+      you've duplicated the formula. Change the formula → forget the other
+      copy → bug. The autograder enforces calling at least 2 helpers.
+    </p>
+  </Callout>
+</Lecture>

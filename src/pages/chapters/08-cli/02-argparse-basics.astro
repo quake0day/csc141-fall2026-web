@@ -1,0 +1,55 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="08-cli"
+  lessonSlug="02-argparse-basics"
+  hook="Two add_argument calls — one positional, one flag. Free help text, error messages, and exit codes."
+>
+  <CodePlayground
+    autoRun
+    code={`import argparse
+
+def parse_args(argv):
+    parser = argparse.ArgumentParser(description="Greet someone by name.")
+    parser.add_argument("name", help="The name of the person to greet")
+    parser.add_argument("--shout", action="store_true", help="Print in UPPERCASE")
+    return parser.parse_args(argv)
+
+# Test it directly with a list — no subprocess needed.
+a = parse_args(["Ada"])
+print(a.name, a.shout)             # Ada False
+
+a = parse_args(["Ada", "--shout"])
+print(a.name, a.shout)             # Ada True
+
+a = parse_args(["--shout", "Bob"]) # flags can come BEFORE positionals
+print(a.name, a.shout)             # Bob True`}
+  />
+
+  <Callout tone="note" title="Positional vs optional — the dashes are the cue">
+    <p>
+      <code>add_argument("name")</code> = positional, required.<br/>
+      <code>add_argument("--shout")</code> = optional (leading <code>--</code>).
+    </p>
+  </Callout>
+
+  <h2>What you get for free</h2>
+  <ul>
+    <li><code>--help</code> automatically generated</li>
+    <li>Missing-required-arg error with usage line</li>
+    <li>Order-independent flag/positional ordering</li>
+    <li>Exit code 2 on bad arguments</li>
+  </ul>
+
+  <Callout tone="warning" title="argparse raises SystemExit on bad args">
+    <p>
+      Calling <code>parse_args([])</code> when <code>name</code> is required
+      triggers <code>sys.exit(2)</code>. Tests use
+      <code>pytest.raises(SystemExit)</code> to verify this.
+    </p>
+  </Callout>
+</Lecture>

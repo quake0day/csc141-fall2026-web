@@ -1,0 +1,74 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="08-cli"
+  lessonSlug="04-wc-clone"
+  hook="A clone of Unix wc. Five functions: three counters, one orchestrator, one parser."
+>
+  <h2>The five functions</h2>
+  <ul>
+    <li><code>count_lines(path)</code> — int</li>
+    <li><code>count_words(path)</code> — int</li>
+    <li><code>count_chars(path)</code> — int (includes newlines)</li>
+    <li><code>count_all(path)</code> — tuple, calls the three above</li>
+    <li><code>parse_args(argv)</code> — argparse with path + 3 flags</li>
+  </ul>
+
+  <Callout tone="warning" title="🔒 no_paste mode is ON">
+    <p>Graded homework. Tutor maxes at L2.</p>
+  </Callout>
+
+  <h2>The shape</h2>
+  <CodePlayground
+    code={`import argparse
+import sys
+
+def count_lines(path):
+    with open(path) as f:
+        return sum(1 for _ in f)
+
+def count_words(path):
+    with open(path) as f:
+        return sum(len(line.split()) for line in f)
+
+def count_chars(path):
+    with open(path) as f:
+        return sum(len(line) for line in f)
+
+def count_all(path):
+    return (count_lines(path), count_words(path), count_chars(path))    # composition
+
+def parse_args(argv):
+    parser = argparse.ArgumentParser(description="Count lines, words, characters.")
+    parser.add_argument("path", help="Path to the file to count")
+    parser.add_argument("--lines", action="store_true")
+    parser.add_argument("--words", action="store_true")
+    parser.add_argument("--chars", action="store_true")
+    return parser.parse_args(argv)
+
+# In Pyodide, demonstrate with an in-memory file:
+with open("demo.txt", "w") as f:
+    f.write("the quick brown fox\\njumps over the lazy dog\\n")
+
+print(count_all("demo.txt"))     # (2, 9, 45)`}
+  />
+
+  <Callout tone="tip" title="Decomposition is graded">
+    <p>
+      The autograder verifies that <code>count_all</code> CALLS at least 2
+      of the 3 single-counters. Inlining is rejected — you have to compose.
+    </p>
+  </Callout>
+
+  <h2>Acceptance criteria</h2>
+  <ul>
+    <li>All 8 tests pass</li>
+    <li>Each counter uses <code>with open(...)</code></li>
+    <li><code>count_all</code> calls at least 2 of the 3 counters</li>
+    <li><code>parse_args</code> accepts <code>path</code> + <code>--lines</code> / <code>--words</code> / <code>--chars</code></li>
+  </ul>
+</Lecture>

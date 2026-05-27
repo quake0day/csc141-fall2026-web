@@ -1,0 +1,61 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="09-recursion"
+  lessonSlug="02-fibonacci"
+  hook="Two recursive calls per non-base call. The call tree explodes — but the code reads like the math."
+>
+  <CodePlayground
+    autoRun
+    code={`def fibonacci(n):
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+for x in range(11):
+    print(f"fib({x:>2}) = {fibonacci(x)}")`}
+  />
+
+  <Callout tone="note" title="Source: Think Python §6.8">
+    <p>
+      <em>"If you try to follow the flow of execution here, even for
+      fairly small values of n, your head explodes. But according to the
+      leap of faith, if you assume that the two recursive calls work
+      correctly, then it is clear that you get the right result by adding
+      them together."</em>
+    </p>
+  </Callout>
+
+  <h2>Why it's slow</h2>
+  <p>
+    Each call makes <strong>two</strong> recursive calls. The call tree for
+    <code>fib(5)</code> evaluates <code>fib(3)</code> twice and <code>fib(1)</code>
+    five times. For <code>n = 30</code> the function makes over a million
+    calls; for <code>n = 50</code>, billions.
+  </p>
+
+  <Callout tone="tip" title="The fix: memoization (Ch.11+)">
+    <p>
+      Cache previously-computed values in a dict. <code>fib(n)</code> only
+      gets computed once. We'll cover this when we get to dictionaries.
+    </p>
+  </Callout>
+
+  <CodePlayground
+    caption="The iterative version — linear time"
+    code={`def fibonacci_iter(n):
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+
+print(fibonacci_iter(30))     # 832040 — instant
+print(fibonacci_iter(50))     # 12586269025 — also instant`}
+  />
+</Lecture>

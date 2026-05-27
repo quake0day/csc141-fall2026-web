@@ -1,0 +1,65 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="11-debugging"
+  lessonSlug="01-spot-the-bug"
+  hook="Three broken functions. Each has exactly ONE bug. Find each with the smallest change that fixes it."
+>
+  <h2>Bug #1 — off-by-one</h2>
+  <CodePlayground
+    code={`def greet_all(names):
+    greetings = []
+    for i in range(len(names) - 1):           # ← BUG
+        greetings.append(f"Hello, {names[i]}!")
+    return greetings
+
+print(greet_all(["Ada", "Bob", "Cat"]))     # only 2 greetings — wrong`}
+  />
+
+  <Callout tone="tip" title="Fix">
+    <p>
+      Drop the <code>- 1</code>, or better: iterate directly with
+      <code>for name in names:</code> — more Pythonic.
+    </p>
+  </Callout>
+
+  <h2>Bug #2 — function does nothing</h2>
+  <CodePlayground
+    code={`def max_three(a, b, c):
+    return c                                  # ← BUG: always returns c
+
+print(max_three(1, 5, 3))   # 3 — should be 5`}
+  />
+
+  <Callout tone="tip" title="Fix">
+    <p>
+      Add real comparison logic: <code>if a &gt;= b and a &gt;= c: return a</code>
+      etc. Or just <code>return max(a, b, c)</code> using the builtin.
+    </p>
+  </Callout>
+
+  <h2>Bug #3 — logic inverted</h2>
+  <CodePlayground
+    code={`def count_evens(numbers):
+    count = 0
+    for n in numbers:
+        if n % 2 != 0:                        # ← BUG: counts ODDS
+            count += 1
+    return count
+
+print(count_evens([1, 3, 5, 7]))   # 4 — should be 0`}
+  />
+
+  <Callout tone="pitfall" title="Why this bug is sneaky">
+    <p>
+      For <code>[1, 2, 3, 4, 5, 6]</code> the wrong answer (3 odds) happens
+      to equal the right answer (3 evens). The test
+      <code>test_count_evens_all_odd</code> with input <code>[1, 3, 5, 7]</code>
+      is what exposes it. <strong>Coincidences hide bugs.</strong>
+    </p>
+  </Callout>
+</Lecture>

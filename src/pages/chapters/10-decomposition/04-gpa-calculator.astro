@@ -1,0 +1,83 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="10-decomposition"
+  lessonSlug="04-gpa-calculator"
+  hook="Six functions — five helpers + one orchestrator. The shape of every analytics function you'll write at a job."
+>
+  <h2>The six functions</h2>
+  <ul>
+    <li><code>grade_to_points(letter)</code> — float lookup A=4.0 … F=0.0</li>
+    <li><code>course_quality_points(grade, c)</code> — points × credits</li>
+    <li><code>total_quality_points(courses)</code></li>
+    <li><code>total_credits(courses)</code></li>
+    <li><code>gpa(courses)</code> — guards <code>0.0</code> on empty</li>
+    <li><code>gpa_report(name, courses)</code> — assembles dict</li>
+  </ul>
+
+  <Callout tone="warning" title="🔒 no_paste mode is ON">
+    <p>Graded homework. Tutor maxes at L2.</p>
+  </Callout>
+
+  <CodePlayground
+    code={`def grade_to_points(letter):
+    table = {"A": 4.0, "B": 3.0, "C": 2.0, "D": 1.0, "F": 0.0}
+    if letter not in table:
+        raise ValueError(f"Unknown grade: {letter!r}")
+    return table[letter]
+
+def course_quality_points(grade, credits):
+    return grade_to_points(grade) * credits
+
+def total_quality_points(courses):
+    total = 0.0
+    for grade, credits in courses:
+        total += course_quality_points(grade, credits)
+    return total
+
+def total_credits(courses):
+    total = 0
+    for _, credits in courses:
+        total += credits
+    return total
+
+def gpa(courses):
+    credits = total_credits(courses)
+    if credits == 0:
+        return 0.0
+    return total_quality_points(courses) / credits
+
+def gpa_report(name, courses):
+    return {
+        "name":    name,
+        "courses": len(courses),
+        "credits": total_credits(courses),
+        "gpa":     round(gpa(courses), 2),
+    }
+
+print(gpa_report("Ada Lovelace", [("A", 3), ("B", 3), ("A", 4), ("B", 3)]))
+print(gpa_report("Edge Case", []))`}
+  />
+
+  <Callout tone="tip" title="Dict table beats long elif">
+    <p>
+      <code>{"{'A': 4.0, 'B': 3.0, ...}"}</code> as a lookup is shorter,
+      easier to extend (add <code>"A-": 3.7</code> in one line), and
+      reads as data — not control flow. Tables beat conditionals when the
+      mapping is a pure lookup.
+    </p>
+  </Callout>
+
+  <Callout tone="pitfall" title="Guard empty input">
+    <p>
+      <code>total_quality_points([]) / total_credits([])</code> is
+      <code>0.0 / 0</code>, which raises <code>ZeroDivisionError</code>.
+      An empty transcript shouldn't crash your report. One line of guard
+      handles it.
+    </p>
+  </Callout>
+</Lecture>

@@ -1,0 +1,73 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="11-debugging"
+  lessonSlug="04-fix-the-suite"
+  hook="Four broken functions. Each has exactly one bug — and each bug is a pattern you've seen before. The course capstone."
+>
+  <Callout tone="warning" title="🔒 no_paste mode is ON">
+    <p>Graded homework. Tutor maxes at L2.</p>
+  </Callout>
+
+  <h2>The four bugs</h2>
+  <table class="text-sm">
+    <thead><tr><th>Function</th><th>Bug pattern</th><th>Where you've seen it</th></tr></thead>
+    <tbody>
+      <tr><td><code>letter_grade</code></td><td>elif chain in wrong order</td><td>Ch.2 Letter Grade</td></tr>
+      <tr><td><code>fizzbuzz</code></td><td>append int instead of str</td><td>Ch.3 FizzBuzz</td></tr>
+      <tr><td><code>word_starts_with</code></td><td><code>return</code> instead of <code>append</code></td><td>Ch.6 search vs filter</td></tr>
+      <tr><td><code>bisect_count</code></td><td>off-by-one (missing <code>+ 1</code>)</td><td>Ch.3 Sum 1..n</td></tr>
+    </tbody>
+  </table>
+
+  <h2>The right fixes — for reference after submission</h2>
+  <CodePlayground
+    code={`# letter_grade — order tightest threshold first
+if score >= 90:   return "A"
+elif score >= 80: return "B"
+elif score >= 70: return "C"
+elif score >= 60: return "D"
+else:             return "F"
+
+# fizzbuzz — str(i), not i
+else:
+    result.append(str(i))
+
+# word_starts_with — append, then return matches
+for w in words:
+    if w.startswith(prefix):
+        matches.append(w)            # ← was: return w
+return matches
+
+# bisect_count — inclusive needs + 1
+return hi - lo + 1`}
+  />
+
+  <Callout tone="tip" title="Workflow">
+    <p>
+      Run the tests. Read ONE failing test. Form a hypothesis. Fix the
+      smallest thing. Re-run. Repeat. Don't fix multiple things at once
+      — you won't know which fix worked.
+    </p>
+  </Callout>
+
+  <h2>Acceptance criteria</h2>
+  <ul>
+    <li>All 14 tests pass</li>
+    <li>Each fix is minimal — no rewriting from scratch</li>
+    <li>No new bugs introduced — run all tests after each fix</li>
+  </ul>
+
+  <div class="mt-12 rounded-xl border border-accent-mint/40 bg-accent-mint/[0.06] px-6 py-5">
+    <p class="text-sm font-mono uppercase tracking-wider text-accent-mint">🎓 You've reached the end</p>
+    <p class="mt-2 text-[17px] text-ink-100/95">
+      This is the last graded homework in CSC 141. After this you can
+      write, read, and debug any first-semester Python program. Welcome
+      to programming.
+    </p>
+  </div>
+</Lecture>

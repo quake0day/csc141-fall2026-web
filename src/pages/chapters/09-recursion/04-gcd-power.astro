@@ -1,0 +1,64 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="09-recursion"
+  lessonSlug="04-gcd-power"
+  hook="Euclid's algorithm (300 BCE) + recursive power. Two short recursions in one file."
+>
+  <Callout tone="warning" title="🔒 no_paste mode is ON">
+    <p>Graded homework. Tutor maxes at L2.</p>
+  </Callout>
+
+  <h2>Euclid's GCD</h2>
+  <CodePlayground
+    autoRun
+    code={`def gcd(a, b):
+    if b == 0:
+        return a
+    return gcd(b, a % b)
+
+print(gcd(48, 18))    # 6
+print(gcd(17, 13))    # 1
+print(gcd(10, 0))     # 10`}
+  />
+
+  <h2>Trace <code>gcd(48, 18)</code></h2>
+  <pre class="text-sm"><code>gcd(48, 18) → gcd(18, 12)
+gcd(18, 12) → gcd(12,  6)
+gcd(12,  6) → gcd( 6,  0)
+gcd( 6,  0) → 6                ← base</code></pre>
+
+  <p><code>b</code> shrinks toward 0 each call (because <code>a % b &lt; b</code>), so termination is guaranteed.</p>
+
+  <h2>Recursive power</h2>
+  <CodePlayground
+    autoRun
+    code={`def power(base, exp):
+    if exp == 0:
+        return 1
+    return base * power(base, exp - 1)
+
+print(power(2, 10))    # 1024
+print(power(5, 3))     # 125
+print(power(7, 0))     # 1`}
+  />
+
+  <Callout tone="note" title="The autograder rejects shortcuts">
+    <p>
+      No <code>**</code>, no <code>math.pow</code>, no <code>math.gcd</code>,
+      no loops. Both functions must be recursive. The exercise is to BUILD
+      power from multiplication — that's the lesson.
+    </p>
+  </Callout>
+
+  <h2>Acceptance criteria</h2>
+  <ul>
+    <li>All 9 tests pass</li>
+    <li>Both <code>gcd</code> and <code>power</code> are recursive</li>
+    <li>No loops / no <code>**</code> / no <code>math.gcd</code> / no <code>math.pow</code></li>
+  </ul>
+</Lecture>

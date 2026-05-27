@@ -1,0 +1,43 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="10-decomposition"
+  lessonSlug="01-hypotenuse"
+  hook="TP §6.2 Exercise 6-2. The point isn't the answer — it's practicing the rhythm."
+>
+  <CodePlayground
+    autoRun
+    code={`import math
+
+def hypotenuse(a, b):
+    return math.sqrt(a ** 2 + b ** 2)
+
+print(hypotenuse(3, 4))     # 5.0   (3-4-5)
+print(hypotenuse(5, 12))    # 13.0  (5-12-13)
+print(hypotenuse(8, 15))    # 17.0  (8-15-17)
+print(hypotenuse(1, 1))     # ~1.414`}
+  />
+
+  <Callout tone="tip" title="Build it incrementally — even if it's one line">
+    <p>
+      Stage 1: <code>return 0.0</code> (skeleton, verify it runs).<br/>
+      Stage 2: compute <code>a**2 + b**2</code>, print it.<br/>
+      Stage 3: wrap with <code>math.sqrt</code>, remove the print.<br/>
+      The point is the habit, not the math.
+    </p>
+  </Callout>
+
+  <h2>Pythagorean triples (the test inputs)</h2>
+  <table class="text-sm">
+    <thead><tr><th>a</th><th>b</th><th>hypotenuse</th></tr></thead>
+    <tbody>
+      <tr><td>3</td><td>4</td><td>5</td></tr>
+      <tr><td>5</td><td>12</td><td>13</td></tr>
+      <tr><td>8</td><td>15</td><td>17</td></tr>
+    </tbody>
+  </table>
+</Lecture>

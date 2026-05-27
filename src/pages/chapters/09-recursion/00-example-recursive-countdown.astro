@@ -1,0 +1,61 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="09-recursion"
+  lessonSlug="00-example-recursive-countdown"
+  hook="The textbook's first recursive function. Same output as the Chapter 3 while-loop version, different shape."
+>
+  <CodePlayground
+    autoRun
+    code={`def countdown(n):
+    if n <= 0:
+        print("Blastoff!")
+    else:
+        print(n)
+        countdown(n - 1)        # ← function calls itself
+
+countdown(3)`}
+  />
+
+  <Callout tone="note" title="Source: Think Python §5.7">
+    <p>
+      <em>"It is legal for one function to call another; it is also legal
+      for a function to call itself. It may not be obvious why that is a
+      good thing, but it turns out to be one of the most magical things a
+      program can do."</em>
+    </p>
+  </Callout>
+
+  <h2>Every recursive function has two pieces</h2>
+  <ul>
+    <li><strong>Base case</strong> — <code>if n &lt;= 0: print("Blastoff!")</code> — the "stop" condition.</li>
+    <li><strong>Recursive case</strong> — <code>countdown(n - 1)</code> — call self with a smaller / closer-to-base argument.</li>
+  </ul>
+
+  <h2>Why <code>&lt;= 0</code>, not <code>== 0</code>?</h2>
+  <CodePlayground
+    caption="Don't actually run this — it will RecursionError"
+    code={`def countdown_BUG(n):
+    if n == 0:
+        print("Blastoff!")
+    else:
+        print(n)
+        countdown_BUG(n - 1)
+
+# countdown_BUG(-1)   # → RecursionError: -1, -2, -3, ... never hits 0
+print("(skipped — would RecursionError)")`}
+  />
+
+  <Callout tone="pitfall" title="From TP §5.10">
+    <p>
+      Every recursive call must get <strong>strictly closer</strong> to the
+      base case. <code>n &lt;= 0</code> catches any non-positive input.
+      <code>n == 0</code> only catches exactly zero — negative inputs
+      recurse forever.
+    </p>
+  </Callout>
+</Lecture>

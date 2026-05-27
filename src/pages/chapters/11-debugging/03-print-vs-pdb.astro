@@ -1,0 +1,83 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="11-debugging"
+  lessonSlug="03-print-vs-pdb"
+  hook="Two semantic-error functions. Print debugging finds both. Brief intro to pdb for the day prints stop being enough."
+>
+  <h2>Bug 1 — forgot to divide</h2>
+  <CodePlayground
+    code={`def average(nums):
+    return sum(nums)             # ← BUG: never divides
+
+print(average([10, 20, 30]))     # 60 — should be 20.0`}
+  />
+
+  <h2>Bug 2 — boundary check</h2>
+  <CodePlayground
+    code={`def in_range(value, low, high):
+    return low < value < high    # ← BUG: < excludes boundaries
+
+print(in_range(1, 1, 10))        # False — should be True (inclusive)`}
+  />
+
+  <h2>The fixes</h2>
+  <CodePlayground
+    autoRun
+    code={`def average(nums):
+    if not nums:
+        return 0.0               # guard against ZeroDivisionError
+    return sum(nums) / len(nums)
+
+def in_range(value, low, high):
+    return low <= value <= high
+
+print(average([10, 20, 30]))    # 20.0
+print(average([]))               # 0.0
+print(in_range(1, 1, 10))       # True
+print(in_range(10, 1, 10))      # True
+print(in_range(0, 1, 10))       # False`}
+  />
+
+  <Callout tone="tip" title="Chained comparison">
+    <p>
+      <code>low &lt;= value &lt;= high</code> is exactly the math
+      <em>low ≤ value ≤ high</em>. Python's chained comparison reads
+      naturally — use it.
+    </p>
+  </Callout>
+
+  <h2>When print stops being enough — try pdb</h2>
+  <CodePlayground
+    caption="In a real script you'd add breakpoint() and run with python (not in browser)"
+    code={`# In your terminal — Python 3.7+:
+#
+#     def average(nums):
+#         breakpoint()                 # ← drops into (Pdb) prompt here
+#         return sum(nums) / len(nums)
+#
+# At the (Pdb) prompt:
+#   p nums           # print the value of nums
+#   p sum(nums)      # try any expression
+#   n                # next line
+#   c                # continue
+#   q                # quit
+#
+# For an entry-level course, print covers 90% of bugs.
+# pdb is the tool for when print produces too much noise.
+
+print("(pdb is interactive — try it in your terminal, not the browser)")`}
+  />
+
+  <Callout tone="note" title="From Think Python App.A">
+    <p>
+      <em>"One of the problems with using print statements for debugging
+      is that you can end up buried in output. There are two ways to
+      proceed: simplify the output or simplify the program."</em>
+    </p>
+  </Callout>
+</Lecture>

@@ -1,0 +1,65 @@
+---
+import Lecture from '../../../layouts/Lecture.astro';
+import CodePlayground from '../../../components/CodePlayground.astro';
+import Callout from '../../../components/Callout.astro';
+---
+
+<Lecture
+  chapterSlug="11-debugging"
+  lessonSlug="00-example-print-debug"
+  hook="A function that runs fine but returns the wrong number. The hardest bug type — no exception, no traceback. Walk through finding it with print debugging."
+>
+  <h2>The bug</h2>
+  <CodePlayground
+    caption="sum_to_n(5) should return 15, but returns 10"
+    code={`def sum_to_n_BUGGY(n):
+    total = 0
+    for i in range(1, n):       # bug: should be range(1, n + 1)
+        total += i
+    return total
+
+print(sum_to_n_BUGGY(5))   # 10  ← wrong, expected 15`}
+  />
+
+  <h2>Step 1 — Add print scaffolding</h2>
+  <CodePlayground
+    autoRun
+    code={`def sum_to_n_BUGGY(n):
+    total = 0
+    for i in range(1, n):
+        print(f"DEBUG i={i}, adding to total={total}")
+        total += i
+    print(f"DEBUG final total={total}")
+    return total
+
+sum_to_n_BUGGY(5)`}
+  />
+
+  <Callout tone="tip" title="What the prints reveal">
+    <p>
+      The loop ran for <code>i = 1, 2, 3, 4</code> and stopped. <code>i = 5</code>
+      never happened. Hypothesis confirmed: the range stops one short.
+    </p>
+  </Callout>
+
+  <h2>Step 2 — Fix and verify</h2>
+  <CodePlayground
+    autoRun
+    code={`def sum_to_n(n):
+    total = 0
+    for i in range(1, n + 1):       # FIXED
+        total += i
+    return total
+
+print(sum_to_n(5))     # 15 ✓
+print(sum_to_n(100))   # 5050 ✓`}
+  />
+
+  <Callout tone="note" title="From Think Python §6.2">
+    <p>
+      <em>"Once you get the function working, you should remove [the
+      prints]. Code like that is called scaffolding because it is helpful
+      for building the program but is not part of the final product."</em>
+    </p>
+  </Callout>
+</Lecture>
